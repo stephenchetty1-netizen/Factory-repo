@@ -70,7 +70,7 @@ class MultisectorSafetyTests(unittest.TestCase):
                      getter=lambda url: "<html><title>Countries South Africa</title></html>")
         self.assertEqual(row["status"], "REACHABLE")
         self.assertEqual(row["data"]["opportunity_status"], "NOT_VERIFIED")
-        self.assertIn("not an assignment", row["data"]["next_action"])
+        self.assertIn("worldwide", row["data"]["next_action"])
         self.assertEqual(row["data"]["automation_of_paid_tasks"],
                          "NOT_AUTHORISED_BY_THIS_SCAN")
 
@@ -86,6 +86,17 @@ class MultisectorSafetyTests(unittest.TestCase):
                     "https://onehub-ai-business.floot.app/", "html"),
                    getter=lambda url:"<html><title>Store</title></html>")
         self.assertEqual(row["data"]["sale_status"],"NOT_VERIFIED")
+
+    def test_global_prize_sources_present_without_country_prefilter(self):
+        sources=[x for x in s.DEEP if x[0]=="global-prizes"]
+        self.assertGreaterEqual(len(sources),5)
+        row=s.scan(sources[0],getter=lambda url:"<html><title>Global challenges</title></html>")
+        self.assertEqual(row["data"]["eligible_country"],"CHECK_INDIVIDUAL_RULES")
+        self.assertFalse(row["data"]["cash_award_verified"])
+        self.assertIsNone(row["verified_income_btc"])
+
+    def test_no_ministry_store_in_scanner(self):
+        self.assertFalse(any("onemillionsouls" in x[2] for x in s.QUICK+s.DEEP))
 
     def test_bad_prices_refused(self):
         with self.assertRaises(ValueError):
