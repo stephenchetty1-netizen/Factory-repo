@@ -39,7 +39,10 @@ UNSAFE_TEXT = re.compile(
     r"initialization payload|private key|seed phrase|api secret)",
     re.I | re.S
 )
-MONEY = re.compile(r"\$\s*([0-9]+(?:\.[0-9]+)?)")
+MONEY = re.compile(r"\\$\\s*([0-9][0-9,]*(?:\\.[0-9]+)?)([kK]?)")
+
+def dollars(match):
+    return float(match.group(1).replace(",", "")) * (1000 if match.group(2) else 1)
 ISSUE_URL = re.compile(r"^https://github\.com/([^/]+/[^/]+)/issues/([0-9]+)$")
 PR_REF = re.compile(r"(?<![0-9])#([0-9]+)(?![0-9])")
 
@@ -71,11 +74,15 @@ def safe_candidate(issue, repository=None):
         return None
     # Paid signal: explicit bounty label plus price, OR platform-seeded listing.
     bounty = any("bounty" in l.lower() for l in labels)
-    price = next((float(m.group(1)) for l in labels if (m := MONEY.search(l))), None)
+    price = next((dollars(m) for l in labels if (m := MONEY.search(l))), None)
     if price is None:
-        m = re.search(r"/bounty\s*\$\s*([0-9]+(?:\.[0-9]+)?)", body, re.I)
+        m = re.search(r"/bounty\s*\$\s*([0-9][0-9,]*(?:\.[0-9]+)?)([kK]?)", body, re.I)
         if m:
-            price = float(m.group(1))
+            price = dollars(m)
+    if price is None and bounty:
+        m = MONEY.search(title)
+        if m:
+            price = dollars(m)
     return dict(repo=repo, issue=number, title=title, issue_url=url,
                 label_bounty=bounty, claimed_or_funded_verified=False,
                 observed_usd=price, competing_prs=None,
