@@ -13,3 +13,10 @@ To inspect: GitHub → Factory-repo → Actions → OneHub income opportunity wa
 An external payment provider must be connected and funded by real accepted work before income or conversion is possible. A dashboard cannot confirm funds without a payout or bank/wallet transaction record. Do not enter seed phrases into bots.
 
 Test: `python -m unittest discover -s onehub-income-engine -p 'test_*.py' -v`.
+
+
+## Global worldwide scope
+
+OneHub checks public opportunities across all regions, including global coding/data challenges, research and mobile testing. It does **not** prefilter providers to South Africa. Actual participant eligibility remains tied to the user's true country of residence, device, identity, the provider's rules and a legitimate available payout method. No VPN, fake residency or restricted-account workaround is used.
+
+The scanner never includes One Million Souls for Christ ministry resources or Shopify order records. Its public Shopify market-research page is not a connection to any store or sale.
