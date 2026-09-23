@@ -1,0 +1,45 @@
+name: OneHub income opportunity watch (read-only)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "onehub-income-engine/source_scan.py"
+      - "onehub-income-engine/test_source_scan.py"
+      - ".github/workflows/onehub-income-watch.yml"
+  schedule:
+    - cron: "17 7 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  income-scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test all public-opportunity safety gates
+        run: python -m unittest discover -s onehub-income-engine -p "test_*.py" -v
+      - name: Search official public income opportunity listings
+        run: |
+          python onehub-income-engine/source_scan.py \
+            --out onehub-income-report.md \
+            --json-out onehub-income-report.json
+      - name: Display result counts
+        if: always()
+        run: |
+          if test -f onehub-income-report.md; then head -n 14 onehub-income-report.md; fi
+      - name: Save read-only income report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: onehub-income-watch
+          path: |
+            onehub-income-report.md
+            onehub-income-report.json
+          if-no-files-found: warn
+          retention-days: 14
