@@ -31,6 +31,9 @@ REPOS = (
     "tenstorrent/tt-metal", "stakwork/sphinx-android-v2",
     "stakwork/sphinx-nav-fiber", "stakwork/sphinx-ios-v2",
     "stakwork/sphinx-mac-v2", "stakwork/sphinx-mac",
+    "speakers-in-tech/conference-data", "lablab-ai/community-content",
+    "onyx-dot-app/onyx", "daytona/content",
+    "tailcallhq/graphql-benchmarks", "caley-io/marketing", "tryabby/abby",
 )
 REJECT_REPOS = ("bounty-plaza", "bounty-hunters", "clankernation", "securebananalabs", "docs-old")
 UNSAFE_TEXT = re.compile(
