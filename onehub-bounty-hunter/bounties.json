@@ -1,0 +1,26 @@
+[
+  {
+    "repo": "PrimalHQ/primal-android-app",
+    "issue": 1055,
+    "advertised_sats": 50000,
+    "bounty_url": "https://app.lightningbounties.com/issue/eb8d5715-cd31-4bdb-9e8a-68b386e6b934"
+  },
+  {
+    "repo": "PrimalHQ/primal-web-app",
+    "issue": 133,
+    "advertised_sats": 50000,
+    "bounty_url": "https://app.lightningbounties.com/issue/0673c66a-9e42-49b6-a56f-1182642873b6"
+  },
+  {
+    "repo": "PrimalHQ/primal-ios-app",
+    "issue": 206,
+    "advertised_sats": 50010,
+    "bounty_url": "https://app.lightningbounties.com/issue/9035b808-41cf-4d64-b251-f0871cd0dd20"
+  },
+  {
+    "repo": "MagnivOrg/prompt-layer-library",
+    "issue": 254,
+    "advertised_sats": 5200,
+    "bounty_url": "https://app.lightningbounties.com/issue/ec980fa6-a004-418e-bbaa-7c21ac40a075"
+  }
+]
