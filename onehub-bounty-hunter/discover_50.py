@@ -75,7 +75,7 @@ def safe_candidate(issue, repository=None):
     body = issue.get("body") or ""
     if UNSAFE_TEXT.search(title + "\n" + body):
         return None
-    # Paid signal: explicit bounty label plus price, OR platform-seeded listing.
+    # Price in label/body is only an advertised number; never imply funds are escrowed.
     bounty = any("bounty" in l.lower() for l in labels)
     price = next((dollars(m) for l in labels if (m := MONEY.search(l))), None)
     if price is None:
@@ -98,7 +98,7 @@ def safe_candidate(issue, repository=None):
         flags.append("ASSIGNED")
     if stale:
         flags.append("STALE > 180 days")
-    return dict(repo=repo, issue=number, title=title, issue_url=url,
+    if not bounty and price is None:\n        return None\n    return dict(repo=repo, issue=number, title=title, issue_url=url,
                 label_bounty=bounty, claimed_or_funded_verified=False,
                 observed_usd=price, competing_prs=None, assignees=assignees,
                 stale_over_180_days=stale,
@@ -192,7 +192,7 @@ def report(rows, rejected, errors, target=TARGET):
              "WARNING: This is a discovery queue, NOT 50 escrow-funded bounties.",
              "Do not work until platform funding, expiry, eligibility, competing PRs",
              "and maintainer acceptance are verified. No transactions are performed.", "",
-             "| # | Issue | Indicative USD label | Payment confirmed? |", "|---:|---|---:|---|"]
+             "| # | Issue | Indicative USD | Competing PRs | Funding confirmed? |", "|---:|---|---:|---:|---|"]
     for i, r in enumerate(rows, 1):
         money = r.get("observed_usd")
         label = ("$%.2f" % money) if money is not None else "Unverified"
