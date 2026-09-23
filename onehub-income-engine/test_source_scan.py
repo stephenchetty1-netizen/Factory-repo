@@ -11,12 +11,15 @@ class PublicWatchTests(unittest.TestCase):
         self.assertEqual(len(row["lead_urls"]), 1)
         self.assertFalse(row["payment_verified"])
         self.assertFalse(row["earnings_confirmed"])
-        self.assertFalse(row["sa_payout_verified"])
+        self.assertFalse(row["country_and_payout_verified"])
         self.assertFalse(row["ai_automation_approved"])
 
     def test_country_directory_is_not_job_confirmation(self):
         row = inspect_source(*SOURCES[3], fetch=lambda url: "<p>South Africa</p>")
-        self.assertIn("no individual invitation", row["finding"])
+        self.assertIn("individual country eligibility", row["finding"])
+
+    def test_global_competition_sources_added(self):
+        self.assertGreaterEqual(sum("Global" in source[0] for source in SOURCES),2)
 
     def test_source_failure_does_not_generate_fake_opportunities(self):
         def bad(url):
