@@ -46,12 +46,12 @@ class MultisectorSafetyTests(unittest.TestCase):
         self.assertEqual(v["bid_zar"],100000)
         self.assertEqual(v["executable_profit"],"UNVERIFIED")
 
-    def test_forced_deep_scans_all_four_sectors_without_transactions(self):
+    def test_forced_deep_scans_all_six_sectors_without_transactions(self):
         info=s.scan_all(dt.datetime(2026,9,23,13,22,tzinfo=dt.timezone.utc),
                         getter=lambda url: "<html><title>Public page</title></html>",
                         force_deep=True)
         self.assertEqual(info["sources_checked"],len(s.QUICK)+len(s.DEEP))
-        self.assertEqual(set(info["sectors_attempted"]),{"crypto","mining","sales","trading","paid-work"})
+        self.assertEqual(set(info["sectors_attempted"]),{"crypto","mining","sales","trading","paid-work","global-prizes"})
         self.assertFalse(info["trade_executed"])
         self.assertFalse(info["payouts_sent"])
 
