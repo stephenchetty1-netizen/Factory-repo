@@ -41,6 +41,23 @@ DEEP = (
     ("paid-work", "UserTesting participant application", "https://www.usertesting.com/get-paid-to-test/make-money-online", "html"),
     ("paid-work", "Clickworker official smartphone work", "https://www.clickworker.com/clickworker-app/", "html"),
 )
+# Explicitly label navigation/policy pages; reachable does not mean work is available.
+WORK_ACTIONS = {
+    "Prolific South Africa participation policy":
+        "South Africa appears in official country policy; individual signup, waitlist and ID verification still required.",
+    "Prolific participant study marketplace":
+        "Check account invitation and dashboard manually; no individual paid study discovered.",
+    "TesterWork live test projects":
+        "Review South Africa project requirements and apply manually; broad country directory is not an assignment.",
+    "uTest paid testing project board":
+        "Review individual invitation, device requirements, available payout and eligibility.",
+    "UserTesting participant application":
+        "Check acceptance and individual test offers in an eligible account.",
+    "Clickworker official smartphone work":
+        "Check registration in South Africa, payout details and assigned jobs before starting.",
+}
+BLOCKED_RETRY_NOTE = ("Access denied by site; do not bypass access controls. "
+                      "Use an authorised connector or the site manually.")
 EXPECTED = {
     "mining": "Network/pool aggregate only; never personal miner allocation or revenue",
     "trading": "Indicative public bid/ask only; no executable cross-exchange arbitrage verified",
@@ -118,8 +135,18 @@ def scan(source, getter=fetch):
                 r"<[^>]+>", "", title.group(1))).strip()[:140] if title else
                 "Page responded; contents not independently validated"}
         row["status"] = "REACHABLE"
+        if cat == "paid-work":
+            row["data"]["opportunity_status"] = "NOT_VERIFIED"
+            row["data"]["next_action"] = WORK_ACTIONS.get(name, "Check platform eligibility and open jobs.")
+            row["data"]["automation_of_paid_tasks"] = "NOT_AUTHORISED_BY_THIS_SCAN"
+        elif cat == "sales":
+            row["data"]["sale_status"] = "NOT_VERIFIED"
+            row["data"]["next_action"] = "Check merchant's authenticated orders and actual payments separately."
     except (OSError, ValueError, TypeError, KeyError, IndexError) as exc:
         row["data"] = {"error": type(exc).__name__ + ": " + str(exc)[:180]}
+        if isinstance(exc, urllib.error.HTTPError) and exc.code in (401, 403):
+            row["status"] = "ACCESS_DENIED"
+            row["data"]["next_action"] = BLOCKED_RETRY_NOTE
     return row
 
 def scan_all(now=None, getter=fetch, force_deep=False):
@@ -182,7 +209,11 @@ def main(argv=None):
         print("%s | %s | %s | %s" % (
             row["sector"], row["source"], row["status"],
             json.dumps(row["data"], ensure_ascii=False)))
-    # No false-success claim: partial public source outages are visible in report.
+    # An all-outage scan is a failed attempt, not a successful monitoring check.
+    # Partial outages remain visible in the saved report.
+    if result["reachable_sources"] == 0:
+        print("ERROR: zero public sources reachable; scanner unavailable", file=sys.stderr)
+        return 2
     return 0
 
 if __name__ == "__main__":
