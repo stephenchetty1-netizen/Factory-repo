@@ -86,10 +86,24 @@ def safe_candidate(issue, repository=None):
         m = MONEY.search(title)
         if m:
             price = dollars(m)
+    assignees = [a.get("login", "") for a in issue.get("assignees", [])]
+    stale = False
+    try:
+        last = dt.datetime.fromisoformat((issue.get("updated_at") or "").replace("Z", "+00:00"))
+        stale = (dt.datetime.now(dt.timezone.utc) - last).days > 180
+    except ValueError:
+        pass
+    flags = []
+    if assignees:
+        flags.append("ASSIGNED")
+    if stale:
+        flags.append("STALE > 180 days")
     return dict(repo=repo, issue=number, title=title, issue_url=url,
                 label_bounty=bounty, claimed_or_funded_verified=False,
-                observed_usd=price, competing_prs=None,
-                status="REVIEW: funding/eligibility/owner approval not verified",
+                observed_usd=price, competing_prs=None, assignees=assignees,
+                stale_over_180_days=stale,
+                status="REVIEW: funding/eligibility/owner approval not verified" +
+                       ("; " + "; ".join(flags) if flags else ""),
                 issue_updated_at=issue.get("updated_at"),
                 source="GitHub issue, NOT proof of payment")
 
@@ -110,6 +124,10 @@ def discover(fetch=get, target=TARGET, seeds=None):
     for seed in (seeds or []):
         try:
             issue = fetch("/repos/%s/issues/%s" % (seed["repo"], seed["issue"]))
+            label_names = [l.get("name", "").lower() for l in issue.get("labels", [])]
+            if not seed.get("bounty_url") and not any("bounty" in x for x in label_names):
+                rejected += 1
+                continue
             append(issue)
             if rows and rows[-1]["repo"].lower() == seed["repo"].lower() and rows[-1]["issue"] == seed["issue"]:
                 rows[-1]["bounty_url"] = seed.get("bounty_url")
