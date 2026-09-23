@@ -58,7 +58,7 @@ def get(path):
         return json.load(response)
 
 
-def safe_candidate(issue, repository=None):
+def safe_candidate(issue, repository=None, external_bounty=False):
     url = issue.get("html_url") or ""
     match = ISSUE_URL.match(url)
     if not match or issue.get("pull_request") or issue.get("state") != "open":
@@ -98,7 +98,7 @@ def safe_candidate(issue, repository=None):
         flags.append("ASSIGNED")
     if stale:
         flags.append("STALE > 180 days")
-    if not bounty and price is None:\n        return None\n    return dict(repo=repo, issue=number, title=title, issue_url=url,
+    if not bounty and price is None and not external_bounty:\n        return None\n    return dict(repo=repo, issue=number, title=title, issue_url=url,
                 label_bounty=bounty, claimed_or_funded_verified=False,
                 observed_usd=price, competing_prs=None, assignees=assignees,
                 stale_over_180_days=stale,
@@ -114,7 +114,7 @@ def discover(fetch=get, target=TARGET, seeds=None):
     seen = set()
     def append(issue, repository=None):
         nonlocal rejected
-        row = safe_candidate(issue, repository)
+        row = safe_candidate(issue, repository, external_bounty)
         if not row or (row["repo"].lower(), row["issue"]) in seen:
             rejected += 1
             return
