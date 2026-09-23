@@ -23,6 +23,7 @@ QUICK = (
     ("mining", "Bitcoin difficulty adjustment", "https://mempool.space/api/v1/difficulty-adjustment", "json"),
     ("trading", "Kraken BTC/USD public ticker", "https://api.kraken.com/0/public/Ticker?pair=xbtusd", "json"),
     ("trading", "Bitstamp BTC/USD public ticker", "https://www.bitstamp.net/api/v2/ticker/btcusd/", "json"),
+    ("trading", "Luno BTC/ZAR public ticker", "https://api.luno.com/api/1/ticker?pair=XBTZAR", "json"),
     ("crypto", "CoinGecko BTC and ETH public reference", "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum&vs_currencies=usd%2Czar", "json"),
 )
 DEEP = (
@@ -80,6 +81,9 @@ def extract(category, name, obj):
     if name.startswith("Bitstamp"):
         return {"bid_usd": num(obj["bid"]), "ask_usd": num(obj["ask"]),
                 "executable_profit": "UNVERIFIED"}
+    if name.startswith("Luno"):
+        return {"bid_zar": num(obj["bid"]), "ask_zar": num(obj["ask"]),
+                "pair": obj.get("pair"), "executable_profit": "UNVERIFIED"}
     if name.startswith("CoinGecko"):
         return {"btc_usd": num(obj["bitcoin"]["usd"]),
                 "eth_usd": num(obj["ethereum"]["usd"]),
