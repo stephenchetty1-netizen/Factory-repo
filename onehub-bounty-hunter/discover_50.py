@@ -42,7 +42,7 @@ UNSAFE_TEXT = re.compile(
     r"initialization payload|private key|seed phrase|api secret)",
     re.I | re.S
 )
-MONEY = re.compile(r"\\$\\s*([0-9][0-9,]*(?:\\.[0-9]+)?)([kK]?)")
+MONEY = re.compile(r"\$\s*([0-9][0-9,]*(?:\.[0-9]+)?)([kK]?)")
 
 def dollars(match):
     return float(match.group(1).replace(",", "")) * (1000 if match.group(2) else 1)
