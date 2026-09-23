@@ -72,5 +72,26 @@ class DiscoverySafetyTests(unittest.TestCase):
         self.assertIn("Paid rewards verified: 0", rendered)
 
 
+    def test_funding_assignment_and_prs_are_hard_blockers(self):
+        row = scout.safe_candidate(issue(117))
+        row["assignees"] = ["another-contributor"]
+        row["competing_prs"] = [{"number": 71, "url": "https://github.com/example/pr/71"}]
+        blockers = scout.submission_blockers(row)
+        self.assertIn("FUNDING_NOT_VERIFIED", blockers)
+        self.assertIn("ALREADY_ASSIGNED", blockers)
+        self.assertIn("OPEN_REFERENCING_PRS", blockers)
+
+    def test_tenstorrent_overpublished_tier_requires_review(self):
+        row = scout.safe_candidate(issue(
+            118, labels=[{"name": "bounty"}, {"name": "bounty_difficulty/hard"}],
+            body="", repo="tenstorrent/tt-metal"))
+        row["advertised_usd"] = 35000
+        row["competing_prs"] = []
+        blockers = scout.submission_blockers(row)
+        self.assertIn("AMOUNT_EXCEEDS_PUBLISHED_3000_USD_TIER", blockers)
+        self.assertIn("TENSTORRENT_REQUIRES_ASSIGNMENT_BEFORE_PR", blockers)
+
+
+
 if __name__ == "__main__":
     unittest.main()
