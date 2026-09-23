@@ -101,7 +101,7 @@ def safe_candidate(issue, repository=None, external_bounty=False):
         "competing_prs": None, "issue_updated_at": issue.get("updated_at"),
         "stale_over_180_days": age_days is not None and age_days > 180,
         "assignees": [x.get("login") for x in issue.get("assignees", [])],
-        "status": "REVIEW: sponsor funds, expiry and payment terms UNVERIFIED",
+        "status": "REVIEW: sponsor funds, expiry and payment terms not verified",
         "source": "GitHub issue is only a lead, not an escrow confirmation",
     }
 
@@ -207,12 +207,12 @@ def discover(fetch=get, target=TARGET, seeds=None):
                         (pr.get("body") or ""))]
                 if row["competing_prs"]:
                     row["status"] = (
-                        "CONTESTED: %d open referencing PRs; payment UNVERIFIED"
+                        "CONTESTED: %d open referencing PRs; payment not verified"
                         % len(row["competing_prs"]))
                 elif row["stale_over_180_days"]:
-                    row["status"] = "STALE >180d; sponsor/payment UNVERIFIED"
+                    row["status"] = "STALE >180d; sponsor/payment not verified"
                 else:
-                    row["status"] = "OPEN; no referencing PR found; funding UNVERIFIED"
+                    row["status"] = "OPEN; no referencing PR found; funding not verified"
         except (OSError, ValueError, KeyError, TypeError) as exc:
             errors.append("PR check %s: %s" % (repo, exc))
     return rows, rejected, errors
