@@ -24,39 +24,24 @@
     "bounty_url": "https://app.lightningbounties.com/issue/ec980fa6-a004-418e-bbaa-7c21ac40a075"
   },
   {
-    "repo": "Dokploy/dokploy",
-    "issue": 1413,
-    "bounty_url": "https://algora.io/Dokploy/bounties?status=open"
-  },
-  {
-    "repo": "Dokploy/dokploy",
-    "issue": 416,
-    "bounty_url": "https://algora.io/Dokploy/bounties?status=open"
-  },
-  {
     "repo": "tscircuit/jlcsearch",
-    "issue": 92,
-    "bounty_url": "https://algora.io/tscircuit/bounties?status=open"
+    "issue": 92
   },
   {
     "repo": "tscircuit/pcb-viewer",
-    "issue": 163,
-    "bounty_url": "https://algora.io/tscircuit/bounties?status=open"
+    "issue": 163
   },
   {
     "repo": "tscircuit/autorouting",
-    "issue": 92,
-    "bounty_url": "https://algora.io/tscircuit/bounties?status=open"
+    "issue": 92
   },
   {
     "repo": "go-gitea/gitea",
-    "issue": 1872,
-    "bounty_url": "https://algora.io/go-gitea/bounties?status=open"
+    "issue": 1872
   },
   {
     "repo": "flydelabs/flyde",
-    "issue": 112,
-    "bounty_url": "https://algora.io/flydelabs/bounties?status=open"
+    "issue": 112
   },
   {
     "repo": "arakoodev/EdgeChains",
