@@ -1,0 +1,42 @@
+name: OneHub 50-bounty discovery (read-only)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "27 5 * * *"
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Discover up to 50 real bounty issue leads
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python onehub-bounty-hunter/discover_50.py \
+            --target 50 \
+            --out onehub-50-bounties.md \
+            --json-out onehub-50-bounties.json
+      - name: Print verified discovery counts
+        if: always()
+        run: |
+          if test -f onehub-50-bounties.md; then head -n 11 onehub-50-bounties.md; fi
+      - name: Save research results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: onehub-50-bounty-watchlist
+          path: |
+            onehub-50-bounties.md
+            onehub-50-bounties.json
+          if-no-files-found: warn
+          retention-days: 14
