@@ -34,28 +34,39 @@ DEEP = (
     ("sales", "Payhip public website", "https://payhip.com/", "html"),
     ("sales", "OneHub published storefront reachable", "https://onehub-ai-business.floot.app/", "html"),
     ("crypto", "HackerOne public BTC payout policy", "https://docs.hackerone.com/en/articles/8395720-payment-preferences", "html"),
-    ("paid-work", "Prolific South Africa participation policy", "https://participant-help.prolific.com/en/articles/445007-who-can-participate-in-studies-on-prolific", "html"),
+    ("paid-work", "Prolific global participation policy", "https://participant-help.prolific.com/en/articles/445007-who-can-participate-in-studies-on-prolific", "html"),
     ("paid-work", "Prolific participant study marketplace", "https://www.prolific.com/participants-how-it-works", "html"),
     ("paid-work", "TesterWork live test projects", "https://testerwork.com/current-projects/", "html"),
     ("paid-work", "uTest paid testing project board", "https://www.utest.com/projects", "html"),
     ("paid-work", "UserTesting participant application", "https://www.usertesting.com/get-paid-to-test/make-money-online", "html"),
     ("paid-work", "Clickworker official smartphone work", "https://www.clickworker.com/clickworker-app/", "html"),
+    ("global-prizes", "Topcoder international challenge directory", "https://www.topcoder.com/challenges", "html"),
+    ("global-prizes", "Kaggle international competitions", "https://www.kaggle.com/competitions", "html"),
+    ("global-prizes", "Zindi competitions", "https://zindi.africa/competitions", "html"),
+    ("global-prizes", "Devpost international hackathons", "https://devpost.com/hackathons", "html"),
+    ("global-prizes", "Algora funded issue marketplace", "https://algora.io/bounties", "html"),
 )
 # Explicitly label navigation/policy pages; reachable does not mean work is available.
 WORK_ACTIONS = {
-    "Prolific South Africa participation policy":
-        "South Africa appears in official country policy; individual signup, waitlist and ID verification still required.",
+    "Prolific global participation policy":
+        "Check country-specific account admission, waitlist and identity rules. Do not assume any country can join.",
     "Prolific participant study marketplace":
-        "Check account invitation and dashboard manually; no individual paid study discovered.",
+        "Check participant invitation and account dashboard; no individual paid study verified.",
     "TesterWork live test projects":
-        "Review South Africa project requirements and apply manually; broad country directory is not an assignment.",
+        "Inspect every project worldwide; confirm its own device, country and payout restrictions before applying.",
     "uTest paid testing project board":
-        "Review individual invitation, device requirements, available payout and eligibility.",
+        "Inspect worldwide projects for account-specific invitations and accepted devices.",
     "UserTesting participant application":
-        "Check acceptance and individual test offers in an eligible account.",
+        "Check country acceptance, available tests and withdrawal methods on the actual account.",
     "Clickworker official smartphone work":
-        "Check registration in South Africa, payout details and assigned jobs before starting.",
+        "Inspect global availability; eligibility, assigned jobs and withdrawals differ by country.",
 }
+GLOBAL_PRIZE_ACTION = (
+    "Inspect live challenge rules, deadline, cash-versus-credit award, entry fee, "
+    "country restrictions, mobile feasibility, AI assistance rules, payout route "
+    "and competing participants. Landing page is not a prize claim."
+)
+
 BLOCKED_RETRY_NOTE = ("Access denied by site; do not bypass access controls. "
                       "Use an authorised connector or the site manually.")
 EXPECTED = {
@@ -64,6 +75,7 @@ EXPECTED = {
     "crypto": "Reference price only; no rewards or trading profit verified",
     "sales": "Public research or storefront availability only; no verified orders or revenue",
     "paid-work": "Public application/policy page only; personal enrollment, tasks and payout unverified",
+    "global-prizes": "Public worldwide listing only; cash prize, country access and winning unverified",
 }
 
 def fetch(url):
@@ -141,7 +153,12 @@ def scan(source, getter=fetch):
             row["data"]["automation_of_paid_tasks"] = "NOT_AUTHORISED_BY_THIS_SCAN"
         elif cat == "sales":
             row["data"]["sale_status"] = "NOT_VERIFIED"
-            row["data"]["next_action"] = "Check merchant's authenticated orders and actual payments separately."
+            row["data"]["next_action"] = "Public market research only; exclude unrelated owned ministries and their Shopify orders."
+        elif cat == "global-prizes":
+            row["data"]["opportunity_status"] = "NOT_VERIFIED"
+            row["data"]["next_action"] = GLOBAL_PRIZE_ACTION
+            row["data"]["eligible_country"] = "CHECK_INDIVIDUAL_RULES"
+            row["data"]["cash_award_verified"] = False
     except (OSError, ValueError, TypeError, KeyError, IndexError) as exc:
         row["data"] = {"error": type(exc).__name__ + ": " + str(exc)[:180]}
         if isinstance(exc, urllib.error.HTTPError) and exc.code in (401, 403):
@@ -155,7 +172,8 @@ def scan_all(now=None, getter=fetch, force_deep=False):
     deep = force_deep or (now.hour % 4 == 0 and 7 <= now.minute < 22)
     sources = list(QUICK) + (list(DEEP) if deep else [])
     rows = [scan(s, getter) for s in sources]
-    return {"timestamp_utc": now.isoformat(), "cadence_minutes": 15,
+    return {"timestamp_utc": now.isoformat(), "scope": "GLOBAL_ALL_REGIONS_NO_LOCATION_FILTER",
+            "cadence_minutes": 15,
             "deep_sales_check_this_run": deep,
             "sources_checked": len(rows),
             "reachable_sources": sum(x["status"] == "REACHABLE" for x in rows),
@@ -172,7 +190,9 @@ def report(info):
     lines = ["# OneHub multi-sector 24/7 scheduled watch", "",
              "Observed UTC: " + info["timestamp_utc"],
              "GitHub cron: every 15 minutes, subject to GitHub delays or cancellation.",
-             "Deep sales and payout-policy scan: every four hours.",
+             "Deep global paid-work, challenge and sales scan: every four hours.",
+             "Scope: opportunities worldwide; no region prefilter. Check individual "
+             "country, identity and payout restrictions before applying.",
              "**No trading, mining, sales or transfers executed by this bot.**",
              "**Income not verified: no bank, store-order or wallet verification.**",
              "Data sources reached: %d / %d." %
@@ -187,7 +207,9 @@ def report(info):
         "- No deposits, purchases, paid mining, unauthorised scans or exploitation.",
         "- No auto-orders or trades. No crypto conversion without explicit user approval.",
         "- Never treat dashboard returns, order estimates or quotes as actual income.",
-        "- This monitors selected platforms, not every global provider or site.",
+        "- This monitors selected worldwide sites, not literally every platform.",
+        "- No VPN or identity workaround to evade country or payout restrictions.",
+        "- Unrelated ministry projects and their Shopify order data are excluded.",
         "- A 15-minute scheduled task is not a continuously running worker.",
         "- Respect all provider rate limits and terms; failed sources remain FAILED.", ""])
     return "\n".join(lines)
