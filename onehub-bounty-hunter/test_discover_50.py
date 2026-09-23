@@ -48,7 +48,9 @@ class DiscoverySafetyTests(unittest.TestCase):
                 return issue(101)
             if path == "/repos/go-gitea/gitea":
                 return {"archived": False, "disabled": False, "private": False}
-            if "/pulls?" in path:\n                return []\n            if "/search/issues?" in path:
+            if "/pulls?" in path:
+                return []
+            if "/search/issues?" in path:
                 return {"items": [issue(101), issue(102), issue(103)]}
             return {"archived": True}
         rows, rejected, errors = scout.discover(fetch=fake_fetch, target=2, seeds=[seed])
@@ -56,12 +58,18 @@ class DiscoverySafetyTests(unittest.TestCase):
         self.assertGreaterEqual(rejected, 1)
         self.assertEqual(errors, [])
 
-    def test_archived_repositories_are_excluded(self):\n        self.assertIsNone(scout.safe_candidate(issue(5), repository={"archived": True}))\n\n    def test_unrelated_unfunded_issues_are_excluded(self):\n        self.assertIsNone(scout.safe_candidate(issue(6, labels=[], body="Unpriced feature suggestion")))\n\n    def test_false_rewards_are_not_labelled_confirmed(self):
+    def test_archived_repositories_are_excluded(self):
+        self.assertIsNone(scout.safe_candidate(issue(5), repository={"archived": True}))
+
+    def test_unrelated_unfunded_issues_are_excluded(self):
+        self.assertIsNone(scout.safe_candidate(issue(6, labels=[], body="Unpriced feature suggestion")))
+
+    def test_false_rewards_are_not_labelled_confirmed(self):
         row = scout.safe_candidate(issue(102, labels=[{"name": "💎 Bounty"}], body=""))
         self.assertIsNone(row["observed_usd"])
         self.assertFalse(row["claimed_or_funded_verified"])
         rendered = scout.report([row], rejected=0, errors=[])
-        self.assertIn("NOT 50 escrow-funded bounties", rendered)
+        self.assertIn("Paid rewards verified: 0", rendered)
 
 
 if __name__ == "__main__":
