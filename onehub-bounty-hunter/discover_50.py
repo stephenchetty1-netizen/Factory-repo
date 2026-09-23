@@ -118,27 +118,34 @@ def discover(fetch=get, target=TARGET, seeds=None):
                 rows[-1]["source"] = "Existing tracked listing + current GitHub issue"
         except (OSError, ValueError, KeyError) as exc:
             errors.append("%s#%s: %s" % (seed.get("repo"), seed.get("issue"), exc))
-    for repo in REPOS:
+    # Global paginated search avoids GitHub's low search-requests-per-minute limit
+    # (a separate request for each repository can fail midway and leave stale reports).
+    allow = {repo.lower() for repo in REPOS}
+    for label in ("💎 Bounty", "bounty"):
         if len(rows) >= target:
             break
-        try:
-            owner, name = repo.split("/")
-            meta = fetch("/repos/%s/%s" % (owner, name))
-            if meta.get("archived") or meta.get("disabled") or meta.get("private"):
-                continue
-            for bounty_label in ("💎 Bounty", "bounty"):
-                query = ('repo:%s is:issue is:open label:"%s" -label:"💰 Rewarded"'
-                         % (repo, bounty_label))
-                data = fetch("/search/issues?" + urllib.parse.urlencode(
-                    {"q": query, "per_page": 100, "sort": "updated", "order": "desc"}))
-                for item in data.get("items", []):
-                    append(item, meta)
-                    if len(rows) >= target:
-                        break
+        for page in range(1, 9):
+            if len(rows) >= target:
+                break
+            query = 'is:issue is:open label:"%s" -label:"💰 Rewarded"' % label
+            try:
+                data = fetch("/search/issues?" + urllib.parse.urlencode({
+                    "q": query, "per_page": 100, "page": page, "sort": "updated",
+                    "order": "desc"}))
+            except (OSError, ValueError, KeyError) as exc:
+                errors.append("Global bounty search %s page %s: %s" %
+                              (label, page, exc))
+                break
+            items = data.get("items", [])
+            for item in items:
+                url = item.get("html_url") or ""
+                found = ISSUE_URL.match(url)
+                if found and found.group(1).lower() in allow:
+                    append(item)
                 if len(rows) >= target:
                     break
-        except (OSError, ValueError, KeyError) as exc:
-            errors.append("%s: %s" % (repo, exc))
+            if len(items) < 100:
+                break
     return rows, rejected, errors
 
 
