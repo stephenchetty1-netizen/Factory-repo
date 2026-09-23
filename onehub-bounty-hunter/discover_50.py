@@ -29,15 +29,15 @@ REPOS = (
     "Dokploy/dokploy", "Dokploy/templates", "coollabsio/coolify",
     "antinomyhq/forgecode", "aqualinkorg/aqualink-app",
 )
-REJECT_REPOS = ("bounty-plaza", "bounty-hunters", "clankernation", "securebananalabs", "docS-old")
+REJECT_REPOS = ("bounty-plaza", "bounty-hunters", "clankernation", "securebananalabs", "docs-old")
 UNSAFE_TEXT = re.compile(
     r"(?:paste|reveal|print|embed|include|disclose|upload).{0,95}"
     r"(?:system prompt|hidden instruction|developer prompt|entire conversation|"
     r"initialization payload|private key|seed phrase|api secret)",
     re.I | re.S
 )
-MONEY = re.compile(r"\\$\\s*([0-9]+(?:\\.[0-9]+)?)")
-ISSUE_URL = re.compile(r"^https://github\\.com/([^/]+/[^/]+)/issues/([0-9]+)$")
+MONEY = re.compile(r"\$\s*([0-9]+(?:\.[0-9]+)?)")
+ISSUE_URL = re.compile(r"^https://github\.com/([^/]+/[^/]+)/issues/([0-9]+)$")
 PR_REF = re.compile(r"(?<![0-9])#([0-9]+)(?![0-9])")
 
 
@@ -64,13 +64,13 @@ def safe_candidate(issue, repository=None):
         return None
     title = issue.get("title") or ""
     body = issue.get("body") or ""
-    if UNSAFE_TEXT.search(title + "\\n" + body):
+    if UNSAFE_TEXT.search(title + "\n" + body):
         return None
     # Paid signal: explicit bounty label plus price, OR platform-seeded listing.
     bounty = any("bounty" in l.lower() for l in labels)
     price = next((float(m.group(1)) for l in labels if (m := MONEY.search(l))), None)
     if price is None:
-        m = re.search(r"/bounty\\s*\\$\\s*([0-9]+(?:\\.[0-9]+)?)", body, re.I)
+        m = re.search(r"/bounty\s*\$\s*([0-9]+(?:\.[0-9]+)?)", body, re.I)
         if m:
             price = float(m.group(1))
     return dict(repo=repo, issue=number, title=title, issue_url=url,
@@ -142,7 +142,7 @@ def report(rows, rejected, errors, target=TARGET):
     lines += ["", "Rejected/duplicate/stale: %d; retrieval errors: %d." % (rejected,len(errors))]
     for err in errors:
         lines.append("- " + err)
-    return "\\n".join(lines) + "\\n"
+    return "\n".join(lines) + "\n"
 
 
 def main(argv=None):
