@@ -55,6 +55,15 @@ class MultisectorSafetyTests(unittest.TestCase):
         self.assertFalse(info["trade_executed"])
         self.assertFalse(info["payouts_sent"])
 
+    def test_paid_work_research_never_marks_earnings(self):
+        sources=[x for x in s.DEEP if x[0]=="paid-work"]
+        self.assertGreaterEqual(len(sources),5)
+        r=s.scan(sources[0],getter=lambda url: "<html><title>Paid studies</title></html>")
+        self.assertEqual(r["status"],"REACHABLE")
+        self.assertIsNone(r["verified_income_zar"])
+        self.assertIsNone(r["verified_income_btc"])
+        self.assertIn("enrollment",r["limitation"])
+
     def test_bad_prices_refused(self):
         with self.assertRaises(ValueError):
             s.num(float("nan"))
