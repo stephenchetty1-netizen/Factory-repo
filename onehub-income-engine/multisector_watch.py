@@ -34,12 +34,19 @@ DEEP = (
     ("sales", "Payhip public website", "https://payhip.com/", "html"),
     ("sales", "OneHub published storefront reachable", "https://onehub-ai-business.floot.app/", "html"),
     ("crypto", "HackerOne public BTC payout policy", "https://docs.hackerone.com/en/articles/8395720-payment-preferences", "html"),
+    ("paid-work", "Prolific South Africa participation policy", "https://participant-help.prolific.com/en/articles/445007-who-can-participate-in-studies-on-prolific", "html"),
+    ("paid-work", "Prolific participant study marketplace", "https://www.prolific.com/participants-how-it-works", "html"),
+    ("paid-work", "TesterWork live test projects", "https://testerwork.com/current-projects/", "html"),
+    ("paid-work", "uTest paid testing project board", "https://www.utest.com/projects", "html"),
+    ("paid-work", "UserTesting participant application", "https://www.usertesting.com/get-paid-to-test/make-money-online", "html"),
+    ("paid-work", "Clickworker official smartphone work", "https://www.clickworker.com/clickworker-app/", "html"),
 )
 EXPECTED = {
     "mining": "Network/pool aggregate only; never personal miner allocation or revenue",
     "trading": "Indicative public bid/ask only; no executable cross-exchange arbitrage verified",
     "crypto": "Reference price only; no rewards or trading profit verified",
     "sales": "Public research or storefront availability only; no verified orders or revenue",
+    "paid-work": "Public application/policy page only; personal enrollment, tasks and payout unverified",
 }
 
 def fetch(url):
