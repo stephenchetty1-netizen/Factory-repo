@@ -64,6 +64,29 @@ class MultisectorSafetyTests(unittest.TestCase):
         self.assertIsNone(r["verified_income_btc"])
         self.assertIn("enrollment",r["limitation"])
 
+    def test_paid_work_page_does_not_invent_job(self):
+        row = s.scan(("paid-work", "TesterWork live test projects",
+                      "https://testerwork.com/current-projects/", "html"),
+                     getter=lambda url: "<html><title>Countries South Africa</title></html>")
+        self.assertEqual(row["status"], "REACHABLE")
+        self.assertEqual(row["data"]["opportunity_status"], "NOT_VERIFIED")
+        self.assertIn("not an assignment", row["data"]["next_action"])
+        self.assertEqual(row["data"]["automation_of_paid_tasks"],
+                         "NOT_AUTHORISED_BY_THIS_SCAN")
+
+    def test_access_denied_is_not_pass(self):
+        def forbidden(url):
+            raise s.urllib.error.HTTPError(url, 403, "Forbidden", {}, None)
+        row = s.scan(s.DEEP[2], getter=forbidden)
+        self.assertEqual(row["status"], "ACCESS_DENIED")
+        self.assertIn("do not bypass", row["data"]["next_action"])
+
+    def test_sales_page_not_verified_as_sale(self):
+        row=s.scan(("sales", "OneHub published storefront reachable",
+                    "https://onehub-ai-business.floot.app/", "html"),
+                   getter=lambda url:"<html><title>Store</title></html>")
+        self.assertEqual(row["data"]["sale_status"],"NOT_VERIFIED")
+
     def test_bad_prices_refused(self):
         with self.assertRaises(ValueError):
             s.num(float("nan"))
