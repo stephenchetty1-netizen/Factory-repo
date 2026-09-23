@@ -40,6 +40,21 @@ class MultisectorSafetyTests(unittest.TestCase):
         self.assertFalse(x["deep_sales_check_this_run"])
         self.assertEqual(x["sources_checked"],len(s.QUICK))
 
+    def test_luno_zar_market_price_is_not_profit(self):
+        v=s.extract("trading","Luno BTC/ZAR public ticker",
+                    {"bid":"100000","ask":"100050","pair":"XBTZAR"})
+        self.assertEqual(v["bid_zar"],100000)
+        self.assertEqual(v["executable_profit"],"UNVERIFIED")
+
+    def test_forced_deep_scans_all_four_sectors_without_transactions(self):
+        info=s.scan_all(dt.datetime(2026,9,23,13,22,tzinfo=dt.timezone.utc),
+                        getter=lambda url: "<html><title>Public page</title></html>",
+                        force_deep=True)
+        self.assertEqual(info["sources_checked"],len(s.QUICK)+len(s.DEEP))
+        self.assertEqual(set(info["sectors_attempted"]),{"crypto","mining","sales","trading"})
+        self.assertFalse(info["trade_executed"])
+        self.assertFalse(info["payouts_sent"])
+
     def test_bad_prices_refused(self):
         with self.assertRaises(ValueError):
             s.num(float("nan"))
