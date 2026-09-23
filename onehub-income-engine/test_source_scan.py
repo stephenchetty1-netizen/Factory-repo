@@ -21,6 +21,14 @@ class PublicWatchTests(unittest.TestCase):
     def test_global_competition_sources_added(self):
         self.assertGreaterEqual(sum("Global" in source[0] for source in SOURCES),2)
 
+    def test_global_competition_page_does_not_claim_prize(self):
+        source=next(x for x in SOURCES if x[0]=="Kaggle Global Competitions")
+        row=inspect_source(*source,fetch=lambda url:"<html><title>Worldwide competitions</title></html>")
+        self.assertEqual(row["access"],"ACCESSIBLE")
+        self.assertIn("payout remain unverified",row["finding"])
+        self.assertFalse(row["earnings_confirmed"])
+        self.assertFalse(row["payment_verified"])
+
     def test_source_failure_does_not_generate_fake_opportunities(self):
         def bad(url):
             raise OSError("offline")
