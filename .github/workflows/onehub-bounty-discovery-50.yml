@@ -1,6 +1,12 @@
 name: OneHub 50-bounty discovery (read-only)
 
 on:
+  push:
+    paths:
+      - "onehub-bounty-hunter/discover_50.py"
+      - "onehub-bounty-hunter/test_discover_50.py"
+      - "onehub-bounty-hunter/bounties.json"
+      - ".github/workflows/onehub-bounty-discovery-50.yml"
   workflow_dispatch:
   schedule:
     - cron: "27 5 * * *"
@@ -18,6 +24,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Run safety and parsing unit tests
+        run: python -m unittest discover -s onehub-bounty-hunter -p "test_discover_50.py" -v
       - name: Discover up to 50 real bounty issue leads
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
