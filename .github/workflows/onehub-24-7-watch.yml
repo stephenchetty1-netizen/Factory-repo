@@ -1,0 +1,49 @@
+name: OneHub 24-7 multi-sector watch (read-only)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "onehub-income-engine/multisector_watch.py"
+      - "onehub-income-engine/test_multisector_watch.py"
+      - ".github/workflows/onehub-24-7-watch.yml"
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: onehub-multisector-watch
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run safety and parsing tests
+        run: python -m unittest discover -s onehub-income-engine -p "test_multisector_watch.py" -v
+      - name: Read public mining trading crypto and sales sources
+        run: |
+          python onehub-income-engine/multisector_watch.py \
+            --out onehub-24-7.md \
+            --json-out onehub-24-7.json
+      - name: Print status
+        if: always()
+        run: |
+          if test -f onehub-24-7.md; then head -n 12 onehub-24-7.md; fi
+      - name: Save timestamped research snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: onehub-24-7-watch
+          path: |
+            onehub-24-7.md
+            onehub-24-7.json
+          if-no-files-found: warn
+          retention-days: 2
