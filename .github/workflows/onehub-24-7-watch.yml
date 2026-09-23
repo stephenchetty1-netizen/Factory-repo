@@ -30,7 +30,9 @@ jobs:
         run: python -m unittest discover -s onehub-income-engine -p "test_multisector_watch.py" -v
       - name: Read public mining trading crypto and sales sources
         run: |
-          python onehub-income-engine/multisector_watch.py \
+          ARGS=""
+          if [[ "$GITHUB_EVENT_NAME" != "schedule" ]]; then ARGS="--deep"; fi
+          python onehub-income-engine/multisector_watch.py $ARGS \
             --out onehub-24-7.md \
             --json-out onehub-24-7.json
       - name: Print status
