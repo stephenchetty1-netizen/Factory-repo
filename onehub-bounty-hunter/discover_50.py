@@ -146,6 +146,23 @@ def discover(fetch=get, target=TARGET, seeds=None):
                     break
             if len(items) < 100:
                 break
+    # Focused follow-up fills real leads missed by global search result pagination.
+    # A GitHub bounty label remains unverified until the sponsor/payment source is checked.
+    for org in ("tenstorrent", "stakwork", "tscircuit"):
+        if len(rows) >= target:
+            break
+        query = 'org:%s is:issue is:open label:bounty' % org
+        try:
+            data = fetch("/search/issues?" + urllib.parse.urlencode({
+                "q": query, "per_page": 100, "sort": "updated", "order": "desc"}))
+            for item in data.get("items", []):
+                found = ISSUE_URL.match(item.get("html_url") or "")
+                if found and found.group(1).lower() in allow:
+                    append(item)
+                if len(rows) >= target:
+                    break
+        except (OSError, ValueError, KeyError) as exc:
+            errors.append("Organization %s: %s" % (org, exc))
     return rows, rejected, errors
 
 
