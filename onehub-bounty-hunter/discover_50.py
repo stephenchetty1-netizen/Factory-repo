@@ -27,7 +27,7 @@ REPOS = (
     "arakoodev/EdgeChains", "gyroflow/gyroflow", "highlight/highlight",
     "revertinc/revert", "documenso/documenso", "projectdiscovery/nuclei",
     "Dokploy/dokploy", "Dokploy/templates", "coollabsio/coolify",
-    "antinomyhq/forgecode", "aqualinkorg/aqualink-app",
+    "aqualinkorg/aqualink-app",
 )
 REJECT_REPOS = ("bounty-plaza", "bounty-hunters", "clankernation", "securebananalabs", "docs-old")
 UNSAFE_TEXT = re.compile(
