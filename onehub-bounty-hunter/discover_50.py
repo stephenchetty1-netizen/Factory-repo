@@ -218,26 +218,63 @@ def discover(fetch=get, target=TARGET, seeds=None):
     return rows, rejected, errors
 
 
+
+def submission_blockers(row):
+    """Hard blockers: listing != contract and an open issue != unclaimed work."""
+    blockers = []
+    if not row.get("funding_verified_live", False):
+        blockers.append("FUNDING_NOT_VERIFIED")
+    if row.get("assignees"):
+        blockers.append("ALREADY_ASSIGNED")
+    if row.get("competing_prs") is None:
+        blockers.append("PR_CHECK_UNKNOWN")
+    elif row["competing_prs"]:
+        blockers.append("OPEN_REFERENCING_PRS")
+    if row.get("stale_over_180_days"):
+        blockers.append("STALE_ISSUE")
+    if not any(row.get(key) is not None for key in
+               ("advertised_usd", "advertised_sats", "observed_usd")):
+        blockers.append("NO_ADVERTISED_AMOUNT")
+    if row.get("repo", "").lower().startswith("tenstorrent/"):
+        blockers.append("TENSTORRENT_REQUIRES_ASSIGNMENT_BEFORE_PR")
+        amount = row.get("advertised_usd")
+        if amount is None:
+            amount = row.get("observed_usd")
+        if isinstance(amount, (int, float)) and amount > 3000:
+            blockers.append("AMOUNT_EXCEEDS_PUBLISHED_3000_USD_TIER")
+    return blockers
+
+
 def report(rows, rejected, errors, target=TARGET):
+    for row in rows:
+        row["submission_blockers"] = submission_blockers(row)
+        row["ready_for_submission"] = not row["submission_blockers"]
+    ready = sum(row["ready_for_submission"] for row in rows)
+    assigned = sum(bool(row.get("assignees")) for row in rows)
+    competing = sum(bool(row.get("competing_prs")) for row in rows)
     lines = ["# OneHub 50-bounty discovery queue", "",
              "Checked UTC: " + dt.datetime.now(dt.timezone.utc).isoformat(),
              "Target: %d | Open issue leads: %d | Remaining: %d" %
              (target, len(rows), max(target - len(rows), 0)), "",
              "**Paid rewards verified: 0. Live escrow verified: 0.**",
+             "**Eligible for immediate submission on verified evidence: %d**" % ready,
+             "Already assigned: %d | with referencing PRs: %d" % (assigned, competing),
              "Bounty platform listing is NOT proof that funds can be collected.",
              "Check expiry, claims, competing work, location and sponsor approval.",
              "",
-             "| # | GitHub issue | Advertised USD | Open referencing PRs | Escrow verified? |",
-             "|---:|---|---:|---:|---|"]
+             "| # | GitHub issue | Advertised USD | PR refs | Assigned? | Blockers |",
+             "|---:|---|---:|---:|---|---|"]
     for i, row in enumerate(rows, 1):
         v = row.get("advertised_usd")
         if v is None:
             v = row.get("observed_usd")
         price = "$%.2f" % v if v is not None else "Unverified"
         competing = row.get("competing_prs")
-        lines.append("| %d | [%s#%d](%s) | %s | %s | No |" % (
+        lines.append("| %d | [%s#%d](%s) | %s | %s | %s | %s |" % (
             i, row["repo"], row["issue"], row["issue_url"],
-            price, len(competing) if competing is not None else "Unknown"))
+            price, len(competing) if competing is not None else "Unknown",
+            "Yes" if row.get("assignees") else "No",
+            ", ".join(row["submission_blockers"])))
     lines += ["", "Excluded/duplicate: %d | errors: %d" % (
         rejected, len(errors))]
     for error in errors:
@@ -258,9 +295,11 @@ def main(argv=None):
     args.out.write_text(report(rows, rejected, errors, args.target), encoding="utf8")
     args.json_out.write_text(json.dumps({
         "target": args.target, "discovered": len(rows), "funded_verified": 0,
+        "ready_for_submission": sum(not submission_blockers(row) for row in rows),
         "entries": rows, "errors": errors}, indent=2), encoding="utf8")
-    print("Target %d; discovered %d open leads; 0 funded verified; %d errors" %
-          (args.target, len(rows), len(errors)))
+    print("Target %d; discovered %d open leads; 0 funded verified; %d ready; %d errors" %
+          (args.target, len(rows), sum(not submission_blockers(row) for row in rows),
+           len(errors)))
     return 1 if errors else 0
 
 
