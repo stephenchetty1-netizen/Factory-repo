@@ -98,6 +98,16 @@ class MultisectorSafetyTests(unittest.TestCase):
     def test_no_ministry_store_in_scanner(self):
         self.assertFalse(any("onemillionsouls" in x[2] for x in s.QUICK+s.DEEP))
 
+    def test_global_scope_and_unverified_income_on_full_scan(self):
+        info=s.scan_all(dt.datetime(2026,9,24,8,7,tzinfo=dt.timezone.utc),
+                        getter=lambda url: "<html><title>Public</title></html>",
+                        force_deep=True)
+        self.assertEqual(info["scope"],"GLOBAL_ALL_REGIONS_NO_LOCATION_FILTER")
+        self.assertIn("NOT CHECKED",info["new_verified_income"])
+        self.assertTrue(all(row["verified_income_zar"] is None
+                            and row["verified_income_btc"] is None
+                            for row in info["results"]))
+
     def test_bad_prices_refused(self):
         with self.assertRaises(ValueError):
             s.num(float("nan"))
