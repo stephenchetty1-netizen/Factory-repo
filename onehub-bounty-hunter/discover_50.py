@@ -28,6 +28,9 @@ REPOS = (
     "revertinc/revert", "documenso/documenso", "projectdiscovery/nuclei",
     "Dokploy/dokploy", "Dokploy/templates", "coollabsio/coolify",
     "aqualinkorg/aqualink-app",
+    "tenstorrent/tt-metal", "stakwork/sphinx-android-v2",
+    "stakwork/sphinx-nav-fiber", "stakwork/sphinx-ios-v2",
+    "stakwork/sphinx-mac-v2", "stakwork/sphinx-mac",
 )
 REJECT_REPOS = ("bounty-plaza", "bounty-hunters", "clankernation", "securebananalabs", "docs-old")
 UNSAFE_TEXT = re.compile(
@@ -113,11 +116,15 @@ def discover(fetch=get, target=TARGET, seeds=None):
             meta = fetch("/repos/%s/%s" % (owner, name))
             if meta.get("archived") or meta.get("disabled") or meta.get("private"):
                 continue
-            query = 'repo:%s is:issue is:open label:"💎 Bounty" -label:"💰 Rewarded"' % repo
-            data = fetch("/search/issues?" + urllib.parse.urlencode(
-                {"q": query, "per_page": 100, "sort": "updated", "order": "desc"}))
-            for item in data.get("items", []):
-                append(item, meta)
+            for bounty_label in ("💎 Bounty", "bounty"):
+                query = ('repo:%s is:issue is:open label:"%s" -label:"💰 Rewarded"'
+                         % (repo, bounty_label))
+                data = fetch("/search/issues?" + urllib.parse.urlencode(
+                    {"q": query, "per_page": 100, "sort": "updated", "order": "desc"}))
+                for item in data.get("items", []):
+                    append(item, meta)
+                    if len(rows) >= target:
+                        break
                 if len(rows) >= target:
                     break
         except (OSError, ValueError, KeyError) as exc:
