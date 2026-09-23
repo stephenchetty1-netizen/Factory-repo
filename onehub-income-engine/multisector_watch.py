@@ -115,10 +115,10 @@ def scan(source, getter=fetch):
         row["data"] = {"error": type(exc).__name__ + ": " + str(exc)[:180]}
     return row
 
-def scan_all(now=None, getter=fetch):
+def scan_all(now=None, getter=fetch, force_deep=False):
     now = now or dt.datetime.now(dt.timezone.utc)
     # Every 4 hours at minute 7. Fast signals still run at each 15-minute pass.
-    deep = (now.hour % 4 == 0 and 7 <= now.minute < 22)
+    deep = force_deep or (now.hour % 4 == 0 and 7 <= now.minute < 22)
     sources = list(QUICK) + (list(DEEP) if deep else [])
     rows = [scan(s, getter) for s in sources]
     return {"timestamp_utc": now.isoformat(), "cadence_minutes": 15,
@@ -162,14 +162,19 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", type=Path, default=Path("onehub-24-7.md"))
     ap.add_argument("--json-out", type=Path, default=Path("onehub-24-7.json"))
+    ap.add_argument("--deep", action="store_true", help="Include all public sales and payout sources now")
     opts = ap.parse_args(argv)
-    result = scan_all()
+    result = scan_all(force_deep=opts.deep)
     opts.out.write_text(report(result), encoding="utf8")
     opts.json_out.write_text(json.dumps(result, indent=2), encoding="utf8")
     print("Sector scan %s: %d/%d sources reachable; sectors %s; "
           "payments unverified; no financial actions" %
           (result["timestamp_utc"], result["reachable_sources"],
            result["sources_checked"], ",".join(result["sectors_attempted"])))
+    for row in result["results"]:
+        print("%s | %s | %s | %s" % (
+            row["sector"], row["source"], row["status"],
+            json.dumps(row["data"], ensure_ascii=False)))
     # No false-success claim: partial public source outages are visible in report.
     return 0
 
