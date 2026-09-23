@@ -26,71 +26,48 @@
   {
     "repo": "Dokploy/dokploy",
     "issue": 1413,
-    "advertised_usd": 100,
-    "bounty_url": "https://algora.io/Dokploy/bounties?status=open",
-    "funding_verified_live": false
+    "bounty_url": "https://algora.io/Dokploy/bounties?status=open"
   },
   {
     "repo": "Dokploy/dokploy",
     "issue": 416,
-    "advertised_usd": 50,
-    "bounty_url": "https://algora.io/Dokploy/bounties?status=open",
-    "funding_verified_live": false
+    "bounty_url": "https://algora.io/Dokploy/bounties?status=open"
   },
   {
     "repo": "tscircuit/jlcsearch",
     "issue": 92,
-    "advertised_usd": 1,
-    "bounty_url": "https://algora.io/tscircuit/bounties?status=open",
-    "funding_verified_live": false
+    "bounty_url": "https://algora.io/tscircuit/bounties?status=open"
   },
   {
     "repo": "tscircuit/pcb-viewer",
     "issue": 163,
-    "advertised_usd": 3,
-    "bounty_url": "https://algora.io/tscircuit/bounties?status=open",
-    "funding_verified_live": false
+    "bounty_url": "https://algora.io/tscircuit/bounties?status=open"
   },
   {
     "repo": "tscircuit/autorouting",
     "issue": 92,
-    "advertised_usd": 50,
-    "bounty_url": "https://algora.io/tscircuit/bounties?status=open",
-    "funding_verified_live": false
+    "bounty_url": "https://algora.io/tscircuit/bounties?status=open"
   },
   {
     "repo": "go-gitea/gitea",
     "issue": 1872,
-    "advertised_usd": 500,
-    "bounty_url": "https://algora.io/go-gitea/bounties?status=open",
-    "funding_verified_live": false
+    "bounty_url": "https://algora.io/go-gitea/bounties?status=open"
   },
   {
     "repo": "flydelabs/flyde",
     "issue": 112,
-    "advertised_usd": 15,
-    "bounty_url": "https://algora.io/flydelabs/bounties?status=open",
-    "funding_verified_live": false
+    "bounty_url": "https://algora.io/flydelabs/bounties?status=open"
   },
   {
     "repo": "arakoodev/EdgeChains",
-    "issue": 290,
-    "advertised_usd": null,
-    "bounty_url": null,
-    "funding_verified_live": false
+    "issue": 290
   },
   {
     "repo": "arakoodev/EdgeChains",
-    "issue": 279,
-    "advertised_usd": null,
-    "bounty_url": null,
-    "funding_verified_live": false
+    "issue": 279
   },
   {
     "repo": "arakoodev/EdgeChains",
-    "issue": 273,
-    "advertised_usd": null,
-    "bounty_url": null,
-    "funding_verified_live": false
+    "issue": 273
   }
 ]
