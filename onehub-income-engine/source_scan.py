@@ -95,6 +95,11 @@ def inspect_source(name, category, url, fetch=fetch_public):
                 "Worldwide project directory available; individual country eligibility, "
                 "payment method and invitation must be checked for each project"
             )
+        elif category in ("Global paid challenges", "Worldwide data prizes", "Worldwide coding competitions"):
+            row["finding"] = (
+                "Global prize directory reachable; challenge cash award, deadline, "
+                "residency restrictions, entry fees and payout remain unverified"
+            )
         elif name == "HackerOne Payment Guide":
             row["finding"] = (
                 "BTC wallet method appears in policy; account eligibility, KYC "
