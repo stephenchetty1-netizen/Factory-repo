@@ -1,0 +1,40 @@
+name: OneHub Bounty Viability Check
+
+on:
+  schedule:
+    - cron: "27 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-bounties:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run offline checks
+        run: python -m unittest discover -s onehub-bounty-hunter -p "test_*.py" -v
+      - name: Query official GitHub issues and competing PRs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python onehub-bounty-hunter/bounty_scout.py \
+            --out onehub-bounty-hunter/bounty-report.md \
+            --json-out onehub-bounty-hunter/bounty-report.json
+      - name: Save research report (never a payment confirmation)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: onehub-bounty-viability-report
+          path: |
+            onehub-bounty-hunter/bounty-report.md
+            onehub-bounty-hunter/bounty-report.json
+          if-no-files-found: warn
+          retention-days: 7
