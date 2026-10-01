@@ -26,7 +26,24 @@ function productPage(p,origin){
  const canonical=origin+'/products/'+p.slug;
  const order=p.name==='Social Media Content Pack'?socialOrder:requestHref(p.name,p.price);
  const schema=JSON.stringify({'@context':'https://schema.org','@type':'Product',name:p.name,category:p.category,brand:{'@type':'Brand',name:'OneHub AI'},offers:{'@type':'Offer',priceCurrency:'USD',price:p.price.toFixed(2),availability:'https://schema.org/InStock',url:canonical}});
- const body='<section class="hero"><div class="eyebrow">'+esc(p.category)+'</div><h1>'+esc(p.name)+'</h1><p class="lead">A focused OneHub digital resource to help you start faster and work more consistently.</p><div class="price">US$'+p.price.toFixed(2)+'</div><div class="actions"><a class="btn primary" href="'+esc(order)+'">'+(p.name==='Social Media Content Pack'?'Prepare order':'Request order')+'</a><a class="btn" href="/tools">Try a free tool first</a></div></section><section class="section"><div class="grid"><div class="card"><h3>Start faster</h3><p class="muted">Use a focused starting point instead of a blank page.</p></div><div class="card"><h3>Stay consistent</h3><p class="muted">Use a repeatable structure for this workflow.</p></div><div class="card"><h3>Adapt it</h3><p class="muted">Customize for your business and verify factual claims before publishing.</p></div></div></section><section class="section"><div class="notice">OneHub does not guarantee sales, reach or income.</div></section>';
+ let body;
+ if(p.name==='Social Media Content Pack'){
+  body='<section class="hero"><div class="eyebrow">OneHub flagship pack · ready for fulfilment</div><h1>Stop starting your social content from a blank page.</h1><p class="lead">Get a finished small-business content starter system with 300 ready-to-adapt content frameworks, prompts and planning assets.</p><div class="price">US$30.54 one-time</div><div class="actions"><a class="btn primary" href="'+esc(order)+'">Prepare my order</a><a class="btn" href="/free-kit">Try the free caption kit first</a></div></section>'+
+  '<section class="section"><h2>Exactly what is included</h2><div class="grid">'+
+  '<div class="card"><h3>30-day content calendar</h3><p class="muted">Thirty daily content angles with execution guidance and CTA direction.</p></div>'+
+  '<div class="card"><h3>100 hooks</h3><p class="muted">Problem, checklist, FAQ, planning and how-to openings you can adapt to your offer.</p></div>'+
+  '<div class="card"><h3>60 caption templates</h3><p class="muted">Reusable problem-solution, FAQ, checklist, myth/fact, how-to, offer and educational structures.</p></div>'+
+  '<div class="card"><h3>50 calls to action</h3><p class="muted">Conversation, save/share, learning, action and offer CTAs without fake urgency.</p></div>'+
+  '<div class="card"><h3>30 Reels / Shorts scripts</h3><p class="muted">Short-form frameworks for tips, FAQs, checklists, mistakes and before/after workflows.</p></div>'+
+  '<div class="card"><h3>30 AI prompts + worksheet</h3><p class="muted">Prompts for content planning plus a brand/audience planning worksheet.</p></div>'+
+  '</div></section>'+
+  '<section class="section"><h2>Sample hooks from the pack</h2><div class="card"><p>• Before you spend another hour on social media content, read this.</p><p>• Still struggling with customer replies? Start here.</p><p>• 3 things to check before your next post.</p><p>• One mistake that makes content planning harder than it needs to be.</p><p>• Turn your next promotion into a repeatable system.</p></div></section>'+
+  '<section class="section"><h2>Who this is for</h2><div class="grid"><div class="card"><h3>Small businesses</h3><p class="muted">A faster starting point for recurring content without hiring ongoing management.</p></div><div class="card"><h3>Freelancers & creators</h3><p class="muted">Reusable structures for planning and writing your own posts.</p></div><div class="card"><h3>Local service businesses</h3><p class="muted">Useful for FAQs, offers, customer education, process posts and short-form scripts.</p></div></div></section>'+
+  '<section class="section"><div class="notice"><strong>Prepared product:</strong> the current pack version is complete and stored for fulfilment. Delivery follows verified payment and a complete order brief. Single-business end-use licence. No posting, ad spend, follower growth, sales results or ongoing social-media management are included or guaranteed.</div></section>'+
+  '<section class="section"><div class="actions"><a class="btn primary" href="'+esc(order)+'">Prepare Social Media Content Pack order · US$30.54</a></div></section>';
+ } else {
+  body='<section class="hero"><div class="eyebrow">'+esc(p.category)+'</div><h1>'+esc(p.name)+'</h1><p class="lead">A focused OneHub digital resource to help you start faster and work more consistently.</p><div class="price">US$'+p.price.toFixed(2)+'</div><div class="actions"><a class="btn primary" href="'+esc(order)+'">Request order</a><a class="btn" href="/tools">Try a free tool first</a></div></section><section class="section"><div class="grid"><div class="card"><h3>Start faster</h3><p class="muted">Use a focused starting point instead of a blank page.</p></div><div class="card"><h3>Stay consistent</h3><p class="muted">Use a repeatable structure for this workflow.</p></div><div class="card"><h3>Adapt it</h3><p class="muted">Customize for your business and verify factual claims before publishing.</p></div></div></section><section class="section"><div class="notice">OneHub does not guarantee sales, reach or income.</div></section>';
+ }
  return shell(p.name+' | OneHub AI',p.name+' — a OneHub digital resource for '+p.category+'.',body,'<link rel="canonical" href="'+esc(canonical)+'"><script type="application/ld+json">'+schema+'</'+'script>');
 }
 function collectionPage(title,lead,cards){
@@ -41,48 +58,28 @@ function toolPage(slug){
  return null;
 }
 function homePage(){
- const growth='<section class="section"><div class="eyebrow">Bulk opportunity</div><h2>Need 1,000 licences in one commercial order?</h2><div class="actions"><a class="btn primary" href="/bulk?utm_source=homepage&utm_medium=organic&utm_campaign=bulk-1000">Request bulk licensing</a></div></section><section class="section"><div class="eyebrow">Tonight sales sprint</div><h2>Campaign target: 1,000 sales before 00:00 SAST</h2><div class="actions"><a class="btn primary" href="/tonight?utm_source=homepage&utm_medium=organic&utm_campaign=midnight-sales-sprint">Open tonight\'s sales sprint</a></div></section><section class="section"><div class="eyebrow">Growth hub</div><h2>Free tools → useful guides → starter products → bundles</h2><div class="actions"><a class="btn primary" href="/tools">5 free tools</a><a class="btn" href="/learn">Marketing guides</a><a class="btn" href="/starter">Starter products</a><a class="btn" href="/bundles">Bundles</a><a class="btn" href="/free-kit">Free caption kit</a></div></section>';
+ const growth='<section class="section"><div class="eyebrow">Featured offer</div><h2>Social Media Content Pack · 300 ready-to-adapt content assets</h2><p class="muted">30-day calendar, 100 hooks, 60 caption templates, 50 CTAs, 30 short-form scripts, 30 AI prompts and a planning worksheet.</p><div class="actions"><a class="btn primary" href="/products/social-media-content-pack?utm_source=homepage&utm_medium=organic&utm_campaign=flagship-pack">See the full pack</a><a class="btn" href="/free-kit">Try the free kit</a></div></section><section class="section"><div class="eyebrow">Bulk opportunity</div><h2>Need a commercial bulk licence?</h2><div class="actions"><a class="btn" href="/bulk?utm_source=homepage&utm_medium=organic&utm_campaign=bulk">Request bulk licensing</a></div></section><section class="section"><div class="eyebrow">Growth hub</div><h2>Free tools → useful guides → starter products → bundles</h2><div class="actions"><a class="btn primary" href="/tools">5 free tools</a><a class="btn" href="/learn">Marketing guides</a><a class="btn" href="/starter">Starter products</a><a class="btn" href="/bundles">Bundles</a><a class="btn" href="/free-kit">Free caption kit</a></div></section>';
  return index.replace('<section class="section" id="products">',growth+'<section class="section" id="products">');
 }
 
 function tonightPage(origin){
  const deadline='2026-10-02T00:00:00+02:00';
- const productJson=JSON.stringify(products).replace(/</g,'\\u003c');
  const clientJs=`(function(){
   const deadline=new Date("${deadline}").getTime();
   const clock=document.getElementById("clock");
-  function tick(){
-   const ms=Math.max(0,deadline-Date.now());
-   const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);
-   clock.textContent=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
-  }
-  tick(); setInterval(tick,1000);
-  const map=JSON.parse(document.getElementById("productData").textContent);
-  function score(p,q){
-   q=q.toLowerCase(); let s=0; const t=(p.name+" "+p.category).toLowerCase();
-   q.split(/\\s+/).forEach(w=>{if(w&&t.includes(w))s+=4});
-   const rules=[["salon","salon"],["restaurant","restaurant"],["clean","cleaning"],["real estate","real estate"],["property","real estate"],["video","video"],["tiktok","tiktok"],["reel","reels"],["whatsapp","whatsapp"],["email","email"],["product","product"],["caption","caption"],["finance","finance"],["budget","budget"],["cv","cv"],["resume","cv"],["planner","planner"],["ai","ai"],["prompt","prompt"],["instagram","instagram"],["flyer","flyer"]];
-   rules.forEach(([a,b])=>{if(q.includes(a)&&t.includes(b))s+=7});
-   return s;
-  }
-  document.getElementById("matchBtn").onclick=()=>{
-   const q=(document.getElementById("matchBiz").value+" "+document.getElementById("matchGoal").value).trim();
-   const rows=(q?map.map(p=>({p,s:score(p,q)})).sort((a,b)=>b.s-a.s).slice(0,5):map.slice(0,5).map(p=>({p,s:0})));
-   document.getElementById("matchOut").innerHTML=rows.map(x=>"<a href='/products/"+x.p.slug+"'>"+x.p.name+"</a> · "+x.p.category).join("<br>");
-  };
-  const share="${origin}/tonight?utm_source=share&utm_medium=organic&utm_campaign=midnight-sales-sprint";
-  document.getElementById("wa").href="https://wa.me/?text="+encodeURIComponent("100 practical digital products + free tools from OneHub AI: "+share);
-  document.getElementById("em").href="mailto:?subject="+encodeURIComponent("OneHub AI digital products")+"&body="+encodeURIComponent("You may find this useful: "+share);
-  document.getElementById("cp").onclick=()=>{
-   navigator.clipboard.writeText(share).then(()=>document.getElementById("copyMsg").textContent="Campaign link copied.").catch(()=>document.getElementById("copyMsg").textContent=share);
-  };
+  function tick(){const ms=Math.max(0,deadline-Date.now()),h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);clock.textContent=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
+  tick();setInterval(tick,1000);
+  const share="${origin}/tonight?utm_source=share&utm_medium=organic&utm_campaign=flagship-pack";
+  document.getElementById("wa").href="https://wa.me/?text="+encodeURIComponent("OneHub Social Media Content Pack — 300 ready-to-adapt content assets for small businesses: "+share);
+  document.getElementById("em").href="mailto:?subject="+encodeURIComponent("OneHub Social Media Content Pack")+"&body="+encodeURIComponent("You may find this useful: "+share);
+  document.getElementById("cp").onclick=()=>navigator.clipboard.writeText(share).then(()=>document.getElementById("copyMsg").textContent="Link copied.").catch(()=>document.getElementById("copyMsg").textContent=share);
  })();`;
- const body='<section class="hero"><div class="eyebrow">OneHub sales sprint · 1 October 2026</div><h1>Find the right digital tool tonight.</h1><p class="lead">Campaign target: 1,000 sales before 00:00 SAST. That is a target, not a guarantee. Start with a free tool, use the product matcher, or go directly to the verified Social Media Content Pack checkout.</p><div class="stats"><div class="stat"><strong id="clock">--:--:--</strong><span>until midnight SAST</span></div><div class="stat"><strong>100</strong><span>products</span></div><div class="stat"><strong>5%</strong><span>verified referral commission</span></div></div><div class="actions" style="margin-top:18px"><a class="btn primary" href="'+socialOrder+'">Prepare Social Media Content Pack order · US$30.54</a><a class="btn" href="/tools">Try free tools</a><a class="btn" href="/products">Browse all 100</a></div></section>'+
- '<section class="section"><div class="eyebrow">Product Match Assistant</div><h2>Tell us what you need</h2><div class="card"><input id="matchBiz" placeholder="Business type, e.g. salon, restaurant, freelancer"><input id="matchGoal" placeholder="Goal, e.g. more content, better replies, product copy" style="margin-top:8px"><button class="btn primary" id="matchBtn" style="margin-top:8px">Match products</button><div id="matchOut" class="output"></div></div></section>'+
- '<section class="section"><div class="eyebrow">Share the store</div><h2>Help someone who needs a faster starting point</h2><div class="actions"><a class="btn" id="wa" href="#">Share on WhatsApp</a><a class="btn" id="em" href="#">Share by email</a><button class="btn" id="cp">Copy campaign link</button></div><p class="muted" id="copyMsg"></p></section>'+
- '<section class="section"><div class="notice">No guaranteed income, reach or sales claims. The Social Media Content Pack uses a brief-first order flow that reveals the matching PayPal checkout only after the brief is saved; other products use request-first ordering.</div></section>'+
- '<script type="application/json" id="productData">'+productJson+'</'+'script><script>'+clientJs+'</'+'script>';
- return shell('OneHub Midnight Sales Sprint','OneHub AI sales sprint: 100 digital products, free tools and a product-match assistant.',body,'<link rel="canonical" href="'+origin+'/tonight">');
+ const body='<section class="hero"><div class="eyebrow">OneHub flagship offer · 1 October 2026</div><h1>300 social content starters for US$30.54.</h1><p class="lead">A finished content-planning pack for small businesses: calendar, hooks, captions, CTAs, short-form scripts, AI prompts and a planning worksheet.</p><div class="stats"><div class="stat"><strong id="clock">--:--:--</strong><span>until this campaign page closes at midnight SAST</span></div><div class="stat"><strong>300</strong><span>content assets / frameworks</span></div><div class="stat"><strong>US$30.54</strong><span>one-time price</span></div></div><div class="actions" style="margin-top:18px"><a class="btn primary" href="'+socialOrder+'">Prepare my order</a><a class="btn" href="/products/social-media-content-pack">See everything included</a><a class="btn" href="/free-kit">Try the free kit first</a></div></section>'+
+ '<section class="section"><h2>What you get</h2><div class="grid"><div class="card"><h3>30-day calendar</h3><p class="muted">Daily content angles, execution guidance and CTA direction.</p></div><div class="card"><h3>210 writing starters</h3><p class="muted">100 hooks + 60 caption templates + 50 CTAs.</p></div><div class="card"><h3>60 creation tools</h3><p class="muted">30 Reels/Shorts script frameworks + 30 AI prompts.</p></div></div></section>'+
+ '<section class="section"><div class="notice">The pack is prepared for fulfilment. Delivery follows verified payment and a complete order brief. No advertising spend, posting service, reach, followers, leads or sales results are included or guaranteed.</div></section>'+
+ '<section class="section"><div class="eyebrow">Share the offer</div><div class="actions"><a class="btn" id="wa" href="#">Share on WhatsApp</a><a class="btn" id="em" href="#">Share by email</a><button class="btn" id="cp">Copy link</button></div><p class="muted" id="copyMsg"></p></section>'+
+ '<script>'+clientJs+'</'+'script>';
+ return shell('OneHub Social Media Content Pack','300 ready-to-adapt social content assets for small businesses.',body,'<link rel="canonical" href="'+origin+'/tonight">');
 }
 
 
