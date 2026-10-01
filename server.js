@@ -25,7 +25,7 @@ function productCard(p){
 }
 function productPage(p,origin,ref){
  const canonical=origin+'/products/'+p.slug;
- const order=p.name==='Social Media Content Pack'?socialOrder:requestHref(p.name,p.price);
+ const order=p.name==='Social Media Content Pack'?trackedSocialOrder(ref):requestHref(p.name,p.price);
  const schema=JSON.stringify({'@context':'https://schema.org','@type':'Product',name:p.name,category:p.category,brand:{'@type':'Brand',name:'OneHub AI'},offers:{'@type':'Offer',priceCurrency:'USD',price:p.price.toFixed(2),availability:'https://schema.org/InStock',url:canonical}});
  let body;
  if(p.name==='Social Media Content Pack'){
