@@ -45,6 +45,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:32px 0;color:var
 <footer><div class="wrap">ONEHUB AI · Independent digital content service · <a href="mailto:Stephenchetty1@gmail.com">Stephenchetty1@gmail.com</a></div></footer>
 <script>
 const SOCIAL_ORDER='https://onehub-ai-business.floot.app/order?pack=social-media-content';
+function trackedSocialOrder(ref){const r=/^[A-Z0-9_-]{4,32}$/.test(String(ref||'').toUpperCase())?String(ref).toUpperCase():'';return SOCIAL_ORDER+(r?'&ref='+encodeURIComponent(r):'');}
 const cats={
 'Small Business Marketing':['Social Media Content Pack','Local Business Launch Kit','30-Day Content Calendar','Small Business Branding Starter','Google Business Profile Copy Kit','Customer Review Request Kit','Promotion Campaign Starter','Seasonal Marketing Planner','Small Business Offer Builder','Referral Marketing Starter Kit'],
 'AI & Prompt Kits':['500 Small Business AI Prompts','AI Sales Prompt Pack','AI Customer Service Prompt Pack','AI Marketing Workflow Kit','ChatGPT Business Starter Kit','AI Content Calendar Prompt Kit','AI Email Response Prompt Pack','AI Product Description Prompt Kit','AI Business Planning Workbook','AI Social Media Workflow Guide'],
@@ -71,7 +72,7 @@ const referral=safeGet('onehub_ref');
 const campaign=Object.fromEntries(campaignKeys.map(k=>[k,safeGet('onehub_'+k)]));
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function orderHref(p){
- if(p.name==='Social Media Content Pack')return SOCIAL_ORDER;
+ if(p.name==='Social Media Content Pack')return trackedSocialOrder(referral);
  const attr=campaignKeys.filter(k=>campaign[k]).map(k=>k+': '+campaign[k]).join('\n');
  const b='Hello OneHub,\n\nI would like to order: '+p.name+'\nPrice shown: US$'+p.price.toFixed(2)+(referral?'\nReferral code: '+referral:'')+(attr?'\n\nCampaign attribution:\n'+attr:'')+'\n\nPlease send product-specific payment instructions and next steps.';
  return 'mailto:Stephenchetty1@gmail.com?subject='+encodeURIComponent('OneHub order request — '+p.name)+'&body='+encodeURIComponent(b);
