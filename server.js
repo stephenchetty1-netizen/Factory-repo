@@ -46,13 +46,41 @@ function homePage(){
 
 function tonightPage(origin){
  const deadline='2026-10-02T00:00:00+02:00';
+ const productJson=JSON.stringify(products).replace(/</g,'\\u003c');
+ const clientJs=`(function(){
+  const deadline=new Date("${deadline}").getTime();
+  const clock=document.getElementById("clock");
+  function tick(){
+   const ms=Math.max(0,deadline-Date.now());
+   const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);
+   clock.textContent=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  }
+  tick(); setInterval(tick,1000);
+  const map=JSON.parse(document.getElementById("productData").textContent);
+  function score(p,q){
+   q=q.toLowerCase(); let s=0; const t=(p.name+" "+p.category).toLowerCase();
+   q.split(/\\s+/).forEach(w=>{if(w&&t.includes(w))s+=4});
+   const rules=[["salon","salon"],["restaurant","restaurant"],["clean","cleaning"],["real estate","real estate"],["property","real estate"],["video","video"],["tiktok","tiktok"],["reel","reels"],["whatsapp","whatsapp"],["email","email"],["product","product"],["caption","caption"],["finance","finance"],["budget","budget"],["cv","cv"],["resume","cv"],["planner","planner"],["ai","ai"],["prompt","prompt"],["instagram","instagram"],["flyer","flyer"]];
+   rules.forEach(([a,b])=>{if(q.includes(a)&&t.includes(b))s+=7});
+   return s;
+  }
+  document.getElementById("matchBtn").onclick=()=>{
+   const q=(document.getElementById("matchBiz").value+" "+document.getElementById("matchGoal").value).trim();
+   const rows=(q?map.map(p=>({p,s:score(p,q)})).sort((a,b)=>b.s-a.s).slice(0,5):map.slice(0,5).map(p=>({p,s:0})));
+   document.getElementById("matchOut").innerHTML=rows.map(x=>"<a href='/products/"+x.p.slug+"'>"+x.p.name+"</a> · "+x.p.category).join("<br>");
+  };
+  const share="${origin}/tonight?utm_source=share&utm_medium=organic&utm_campaign=midnight-sales-sprint";
+  document.getElementById("wa").href="https://wa.me/?text="+encodeURIComponent("100 practical digital products + free tools from OneHub AI: "+share);
+  document.getElementById("em").href="mailto:?subject="+encodeURIComponent("OneHub AI digital products")+"&body="+encodeURIComponent("You may find this useful: "+share);
+  document.getElementById("cp").onclick=()=>{
+   navigator.clipboard.writeText(share).then(()=>document.getElementById("copyMsg").textContent="Campaign link copied.").catch(()=>document.getElementById("copyMsg").textContent=share);
+  };
+ })();`;
  const body='<section class="hero"><div class="eyebrow">OneHub sales sprint · 1 October 2026</div><h1>Find the right digital tool tonight.</h1><p class="lead">Campaign target: 1,000 sales before 00:00 SAST. That is a target, not a guarantee. Start with a free tool, use the product matcher, or go directly to the verified Social Media Content Pack checkout.</p><div class="stats"><div class="stat"><strong id="clock">--:--:--</strong><span>until midnight SAST</span></div><div class="stat"><strong>100</strong><span>products</span></div><div class="stat"><strong>5%</strong><span>verified referral commission</span></div></div><div class="actions" style="margin-top:18px"><a class="btn primary" href="'+paypal+'">Buy Social Media Content Pack · US$30.54</a><a class="btn" href="/tools">Try free tools</a><a class="btn" href="/products">Browse all 100</a></div></section>'+
  '<section class="section"><div class="eyebrow">Product Match Assistant</div><h2>Tell us what you need</h2><div class="card"><input id="matchBiz" placeholder="Business type, e.g. salon, restaurant, freelancer"><input id="matchGoal" placeholder="Goal, e.g. more content, better replies, product copy" style="margin-top:8px"><button class="btn primary" id="matchBtn" style="margin-top:8px">Match products</button><div id="matchOut" class="output"></div></div></section>'+
  '<section class="section"><div class="eyebrow">Share the store</div><h2>Help someone who needs a faster starting point</h2><div class="actions"><a class="btn" id="wa" href="#">Share on WhatsApp</a><a class="btn" id="em" href="#">Share by email</a><button class="btn" id="cp">Copy campaign link</button></div><p class="muted" id="copyMsg"></p></section>'+
  '<section class="section"><div class="notice">No guaranteed income, reach or sales claims. The verified direct PayPal checkout is only for the Social Media Content Pack; other products use request-first ordering.</div></section>'+
- '<script>(function(){const deadline=new Date("'+deadline+'").getTime();const c=document.getElementById("clock");function tick(){const ms=Math.max(0,deadline-Date.now()),h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000);c.textContent=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}tick();setInterval(tick,1000);const map=['+
- JSON.stringify(products.map(p=>({name:p.name,slug:p.slug,category:p.category})))+
- '];function score(p,q){q=q.toLowerCase();let s=0;const t=(p.name+" "+p.category).toLowerCase();q.split(/\\s+/).forEach(w=>{if(w&&t.includes(w))s+=4});const rules=[["salon","salon"],["restaurant","restaurant"],["clean","cleaning"],["real estate","real estate"],["property","real estate"],["video","video"],["tiktok","tiktok"],["reel","reels"],["whatsapp","whatsapp"],["email","email"],["product","product"],["caption","caption"],["finance","finance"],["budget","budget"],["cv","cv"],["resume","cv"],["planner","planner"],["ai","ai"],["prompt","prompt"],["instagram","instagram"],["flyer","flyer"]];rules.forEach(([a,b])=>{if(q.includes(a)&&t.includes(b))s+=7});return s}document.getElementById("matchBtn").onclick=()=>{const q=(document.getElementById("matchBiz").value+" "+document.getElementById("matchGoal").value).trim();const best=map.map(p=>({p,s:score(p,q)})).sort((a,b)=>b.s-a.s).slice(0,5);document.getElementById("matchOut").innerHTML=(q?best:map.slice(0,5).map(p=>({p,s:0}))).map(x=>"<a href=\"/products/"+x.p.slug+"\">"+x.p.name+"</a> · "+x.p.category).join("<br>")};const share=origin+"/tonight?utm_source=share&utm_medium=organic&utm_campaign=midnight-sales-sprint";document.getElementById("wa").href="https://wa.me/?text="+encodeURIComponent("100 practical digital products + free tools from OneHub AI: "+share);document.getElementById("em").href="mailto:?subject="+encodeURIComponent("OneHub AI digital products")+"&body="+encodeURIComponent("You may find this useful: "+share);document.getElementById("cp").onclick=()=>navigator.clipboard.writeText(share).then(()=>document.getElementById("copyMsg").textContent="Campaign link copied.");})();</'+'script>';
+ '<script type="application/json" id="productData">'+productJson+'</'+'script><script>'+clientJs+'</'+'script>';
  return shell('OneHub Midnight Sales Sprint','OneHub AI sales sprint: 100 digital products, free tools and a product-match assistant.',body,'<link rel="canonical" href="'+origin+'/tonight">');
 }
 
