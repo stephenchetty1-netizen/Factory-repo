@@ -29,7 +29,7 @@ function enforceOneHubPolicy(){
  if(!serverSrc.includes('5% of the verified product price')) failures.push('affiliate_5_percent_terms');
  if((serverSrc.match(/schema\.org\/InStock/g)||[]).length!==1) failures.push('in_stock_schema_count');
  if(!serverSrc.includes('Catalogue concept only. Request preparation before any payment is taken.')) failures.push('planned_resource_disclosure');
- if(!serverSrc.includes('<meta name="robots" content="noindex,follow">')) failures.push('planned_resource_noindex');
+ if(!serverSrc.includes("ready?'index,follow':'noindex,follow'")) failures.push('planned_resource_noindex');
  const forbiddenSitemapMap='...products.'+'map(x=>origin+\'/products/\'+x.slug)';
  if(serverSrc.includes(forbiddenSitemapMap)) failures.push('planned_products_in_sitemap');
  if(!serverSrc.includes("trackedSocialOrder(ref)")) failures.push('server_referral_handoff');
@@ -43,8 +43,8 @@ const index=fs.readFileSync(path.join(__dirname,'index.html'),'utf8');
 const style=(index.match(/<style>[\s\S]*?<\/style>/)||['<style>body{font-family:sans-serif}</style>'])[0];
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const slugify=s=>s.toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-function shell(title,desc,body,extraHead=''){
- return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(title)+'</title><meta name="description" content="'+esc(desc)+'"><meta name="robots" content="index,follow">'+extraHead+style+'</head><body><header class="top"><div class="wrap nav"><a class="brand" href="/">ONEHUB <span>AI</span></a><nav class="navlinks"><a href="/products">Products</a><a href="/tools">Free tools</a><a href="/learn">Guides</a><a href="/bundles">Bundles</a><a href="/referrals">Referrals</a></nav></div></header><main class="wrap">'+body+'</main><footer><div class="wrap">ONEHUB AI · Independent digital content service · <a href="mailto:Stephenchetty1@gmail.com">Stephenchetty1@gmail.com</a></div></footer></body></html>';
+function shell(title,desc,body,extraHead='',robots='index,follow'){
+ return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(title)+'</title><meta name="description" content="'+esc(desc)+'"><meta name="robots" content="'+esc(robots)+'">'+extraHead+style+'</head><body><header class="top"><div class="wrap nav"><a class="brand" href="/">ONEHUB <span>AI</span></a><nav class="navlinks"><a href="/products">Products</a><a href="/tools">Free tools</a><a href="/learn">Guides</a><a href="/bundles">Bundles</a><a href="/referrals">Referrals</a></nav></div></header><main class="wrap">'+body+'</main><footer><div class="wrap">ONEHUB AI · Independent digital content service · <a href="mailto:Stephenchetty1@gmail.com">Stephenchetty1@gmail.com</a></div></footer></body></html>';
 }
 function requestHref(name,price){
  return 'mailto:Stephenchetty1@gmail.com?subject='+encodeURIComponent('OneHub order request — '+name)+'&body='+encodeURIComponent('Hello OneHub,\n\nI would like to order: '+name+'\nPrice shown: US$'+Number(price).toFixed(2)+'\n\nPlease send product-specific payment instructions and next steps.');
@@ -77,8 +77,7 @@ function productPage(p,origin,ref){
  } else {
   body='<section class="hero"><div class="eyebrow">Planned resource · '+esc(p.category)+'</div><h1>'+esc(p.name)+'</h1><p class="lead">This item is a catalogue concept, not a completed deliverable yet. You can request preparation and receive confirmed scope, availability and payment instructions before any payment is taken.</p><div class="price">Planned price · US$'+p.price.toFixed(2)+'</div><div class="actions"><a class="btn primary" href="'+esc(order)+'">Request preparation</a><a class="btn" href="/products/social-media-content-pack">Buy the completed flagship instead</a></div></section><section class="section"><div class="grid"><div class="card"><h3>Preparation first</h3><p class="muted">OneHub confirms the exact contents and version before offering checkout.</p></div><div class="card"><h3>No payment yet</h3><p class="muted">A catalogue price is not a live checkout until the deliverable and route are confirmed.</p></div><div class="card"><h3>Clear rights</h3><p class="muted">Licence and permitted use are confirmed before payment.</p></div></div></section><section class="section"><div class="notice">This planned resource is not currently represented as in stock or immediately deliverable. OneHub does not guarantee sales, reach or income.</div></section>';
  }
- const robots=ready?'':'<meta name="robots" content="noindex,follow">';
- return shell(p.name+' | OneHub AI',p.name+' — a OneHub digital resource for '+p.category+'.',body,robots+'<link rel="canonical" href="'+esc(canonical)+'"><script type="application/ld+json">'+schema+'</'+'script>');
+ return shell(p.name+' | OneHub AI',p.name+' — a OneHub digital resource for '+p.category+'.',body,'<link rel="canonical" href="'+esc(canonical)+'"><script type="application/ld+json">'+schema+'</'+'script>',ready?'index,follow':'noindex,follow');
 }
 function collectionPage(title,lead,cards){
  return shell(title+' | OneHub AI',lead,'<section class="hero"><div class="eyebrow">OneHub AI</div><h1>'+esc(title)+'</h1><p class="lead">'+esc(lead)+'</p></section><section class="grid">'+cards+'</section>');
