@@ -29,6 +29,9 @@ function enforceOneHubPolicy(){
  if(!serverSrc.includes('5% of the verified product price')) failures.push('affiliate_5_percent_terms');
  if((serverSrc.match(/schema\.org\/InStock/g)||[]).length!==1) failures.push('in_stock_schema_count');
  if(!serverSrc.includes('Catalogue concept only. Request preparation before any payment is taken.')) failures.push('planned_resource_disclosure');
+ if(!serverSrc.includes('<meta name="robots" content="noindex,follow">')) failures.push('planned_resource_noindex');
+ const forbiddenSitemapMap='...products.'+'map(x=>origin+\'/products/\'+x.slug)';
+ if(serverSrc.includes(forbiddenSitemapMap)) failures.push('planned_products_in_sitemap');
  if(!serverSrc.includes("trackedSocialOrder(ref)")) failures.push('server_referral_handoff');
  if(!indexSrc.includes("trackedSocialOrder(referral)")) failures.push('homepage_referral_handoff');
  if(!indexSrc.includes("const SOCIAL_ORDER='https://onehub-ai-business.floot.app/order?pack=social-media-content'")) failures.push('homepage_order_route');
@@ -74,7 +77,8 @@ function productPage(p,origin,ref){
  } else {
   body='<section class="hero"><div class="eyebrow">Planned resource · '+esc(p.category)+'</div><h1>'+esc(p.name)+'</h1><p class="lead">This item is a catalogue concept, not a completed deliverable yet. You can request preparation and receive confirmed scope, availability and payment instructions before any payment is taken.</p><div class="price">Planned price · US$'+p.price.toFixed(2)+'</div><div class="actions"><a class="btn primary" href="'+esc(order)+'">Request preparation</a><a class="btn" href="/products/social-media-content-pack">Buy the completed flagship instead</a></div></section><section class="section"><div class="grid"><div class="card"><h3>Preparation first</h3><p class="muted">OneHub confirms the exact contents and version before offering checkout.</p></div><div class="card"><h3>No payment yet</h3><p class="muted">A catalogue price is not a live checkout until the deliverable and route are confirmed.</p></div><div class="card"><h3>Clear rights</h3><p class="muted">Licence and permitted use are confirmed before payment.</p></div></div></section><section class="section"><div class="notice">This planned resource is not currently represented as in stock or immediately deliverable. OneHub does not guarantee sales, reach or income.</div></section>';
  }
- return shell(p.name+' | OneHub AI',p.name+' — a OneHub digital resource for '+p.category+'.',body,'<link rel="canonical" href="'+esc(canonical)+'"><script type="application/ld+json">'+schema+'</'+'script>');
+ const robots=ready?'':'<meta name="robots" content="noindex,follow">';
+ return shell(p.name+' | OneHub AI',p.name+' — a OneHub digital resource for '+p.category+'.',body,robots+'<link rel="canonical" href="'+esc(canonical)+'"><script type="application/ld+json">'+schema+'</'+'script>');
 }
 function collectionPage(title,lead,cards){
  return shell(title+' | OneHub AI',lead,'<section class="hero"><div class="eyebrow">OneHub AI</div><h1>'+esc(title)+'</h1><p class="lead">'+esc(lead)+'</p></section><section class="grid">'+cards+'</section>');
@@ -155,7 +159,7 @@ http.createServer((req,res)=>{
  if(p==='/policy-status') return send(200,'application/json; charset=utf-8',JSON.stringify(ENFORCED_POLICY_STATUS));
  if(p==='/'+indexNowKey+'.txt') return send(200,'text/plain; charset=utf-8',indexNowKey);
  if(p==='/robots.txt') return send(200,'text/plain','User-agent: *\nAllow: /\nSitemap: '+origin+'/sitemap.xml\n');
- if(p==='/sitemap.xml'){const urls=[origin+'/',origin+'/products',origin+'/tools',origin+'/learn',origin+'/bundles',origin+'/referrals',origin+'/free-kit',origin+'/starter',origin+'/demos',origin+'/tonight',origin+'/bulk',origin+'/affiliate-kit',origin+'/partners',origin+'/payments',...products.map(x=>origin+'/products/'+x.slug),...bundles.map(x=>origin+'/bundles/'+x.slug),...guides.map(x=>origin+'/learn/'+x.slug),...toolsList.map(x=>origin+'/tools/'+x.slug)];return send(200,'application/xml','<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(x=>'<url><loc>'+x.replace(/&/g,'&amp;')+'</loc></url>').join('')+'</urlset>');}
+ if(p==='/sitemap.xml'){const urls=[origin+'/',origin+'/products',origin+'/products/social-media-content-pack',origin+'/tools',origin+'/learn',origin+'/referrals',origin+'/free-kit',origin+'/demos',origin+'/tonight',origin+'/bulk',origin+'/affiliate-kit',origin+'/partners',origin+'/payments',...guides.map(x=>origin+'/learn/'+x.slug),...toolsList.map(x=>origin+'/tools/'+x.slug)];return send(200,'application/xml','<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(x=>'<url><loc>'+x.replace(/&/g,'&amp;')+'</loc></url>').join('')+'</urlset>');}
  if(p==='/partners') return send(200,'text/html; charset=utf-8',partnersPage(origin));
  if(p==='/payments') return send(200,'text/html; charset=utf-8',paymentsPage(origin));
  if(p==='/affiliate-kit') return send(200,'text/html; charset=utf-8',affiliateKitPage(origin));
