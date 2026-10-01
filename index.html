@@ -39,12 +39,12 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:32px 0;color:var
 
 <section class="section" id="referrals"><div class="eyebrow">Referral program</div><h2>Earn 5% on verified referral sales</h2><div class="grid"><div class="card"><h3>Get a code</h3><p class="muted">Approved referrers receive a unique code.</p></div><div class="card"><h3>Share useful content</h3><p class="muted">Promote relevant products without spam, fake claims or misleading urgency.</p></div><div class="card"><h3>Verified sale</h3><p class="muted">Commission applies only after payment and attribution are confirmed.</p></div></div><div class="actions" style="margin-top:16px"><a class="btn primary" href="mailto:Stephenchetty1@gmail.com?subject=OneHub%20referral%20program%20application">Apply to become a referrer</a></div></section>
 
-<section class="section"><div class="notice">OneHub does not guarantee sales, reach or income. Only the Social Media Content Pack uses the verified direct PayPal checkout. All other products and bundles use a request-first order process with product-specific payment instructions before payment.</div></section>
+<section class="section"><div class="notice">OneHub does not guarantee sales, reach or income. The Social Media Content Pack uses a verified brief-first order flow that shows the matching PayPal checkout only after the customer brief is saved. All other products and bundles use a request-first process with product-specific payment instructions before payment.</div></section>
 </main>
 <a class="free-float" href="#tools">Free tools</a>
 <footer><div class="wrap">ONEHUB AI · Independent digital content service · <a href="mailto:Stephenchetty1@gmail.com">Stephenchetty1@gmail.com</a></div></footer>
 <script>
-const PAYPAL='https://www.paypal.com/ncp/payment/89U7SQXCLHMF2';
+const SOCIAL_ORDER='https://onehub-ai-business.floot.app/order?pack=social-media-content';
 const cats={
 'Small Business Marketing':['Social Media Content Pack','Local Business Launch Kit','30-Day Content Calendar','Small Business Branding Starter','Google Business Profile Copy Kit','Customer Review Request Kit','Promotion Campaign Starter','Seasonal Marketing Planner','Small Business Offer Builder','Referral Marketing Starter Kit'],
 'AI & Prompt Kits':['500 Small Business AI Prompts','AI Sales Prompt Pack','AI Customer Service Prompt Pack','AI Marketing Workflow Kit','ChatGPT Business Starter Kit','AI Content Calendar Prompt Kit','AI Email Response Prompt Pack','AI Product Description Prompt Kit','AI Business Planning Workbook','AI Social Media Workflow Guide'],
@@ -71,12 +71,12 @@ const referral=safeGet('onehub_ref');
 const campaign=Object.fromEntries(campaignKeys.map(k=>[k,safeGet('onehub_'+k)]));
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function orderHref(p){
- if(p.name==='Social Media Content Pack')return PAYPAL;
+ if(p.name==='Social Media Content Pack')return SOCIAL_ORDER;
  const attr=campaignKeys.filter(k=>campaign[k]).map(k=>k+': '+campaign[k]).join('\n');
  const b='Hello OneHub,\n\nI would like to order: '+p.name+'\nPrice shown: US$'+p.price.toFixed(2)+(referral?'\nReferral code: '+referral:'')+(attr?'\n\nCampaign attribution:\n'+attr:'')+'\n\nPlease send product-specific payment instructions and next steps.';
  return 'mailto:Stephenchetty1@gmail.com?subject='+encodeURIComponent('OneHub order request — '+p.name)+'&body='+encodeURIComponent(b);
 }
-function card(p){return '<article class="card"><div class="eyebrow">'+esc(p.category)+'</div><h3>'+esc(p.name)+'</h3><p class="muted">A focused OneHub resource to help you start faster and work more consistently.</p><div class="price">US$'+p.price.toFixed(2)+'</div><a class="btn primary" href="'+orderHref(p)+'">'+(p.name==='Social Media Content Pack'?'Buy now':'Request order')+'</a></article>'}
+function card(p){return '<article class="card"><div class="eyebrow">'+esc(p.category)+'</div><h3>'+esc(p.name)+'</h3><p class="muted">A focused OneHub resource to help you start faster and work more consistently.</p><div class="price">US$'+p.price.toFixed(2)+'</div><a class="btn primary" href="'+orderHref(p)+'">'+(p.name==='Social Media Content Pack'?'Prepare order':'Request order')+'</a></article>'}
 category.innerHTML+=[...new Set(products.map(p=>p.category))].map(c=>'<option>'+esc(c)+'</option>').join('');
 function render(){let list=products;const q=search.value.trim().toLowerCase(),cat=category.value,pr=price.value;if(q)list=list.filter(p=>(p.name+' '+p.category).toLowerCase().includes(q));if(cat)list=list.filter(p=>p.category===cat);if(pr){const[a,b]=pr.split('-').map(Number);list=list.filter(p=>p.price>=a&&p.price<=b)}grid.innerHTML=list.map(card).join('');count.textContent=list.length+' of 100 products'}
 search.addEventListener('input',render);category.addEventListener('change',render);price.addEventListener('change',render);render();
