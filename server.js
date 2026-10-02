@@ -205,7 +205,7 @@ http.createServer((req,res)=>{
  const proto=req.headers['x-forwarded-proto']||'https';const host=req.headers['x-forwarded-host']||req.headers.host||'localhost';const origin=proto+'://'+host;const u=new URL(req.url,origin);const p=u.pathname.replace(/\/$/,'')||'/';
  const send=(code,type,body)=>{res.writeHead(code,{'content-type':type,'x-content-type-options':'nosniff','referrer-policy':'strict-origin-when-cross-origin'});res.end(body)};
  if(p==='/track'){
-  const allowedEvents=new Set(['recommendation','checkout_click','followup_request','special_route','product_details','planned_request','ready_alternative']);
+  const allowedEvents=new Set(['recommendation','checkout_click','followup_request','special_route','product_details','planned_request','ready_alternative','landing_view']);
   const event=(u.searchParams.get('event')||'').slice(0,40);
   if(!allowedEvents.has(event)){res.writeHead(400,{'content-type':'text/plain','cache-control':'no-store'});return res.end('invalid event');}
   const clean=(v,max=120)=>String(v||'').replace(/[^a-zA-Z0-9 _.,+&()\/-]/g,'').slice(0,max);
