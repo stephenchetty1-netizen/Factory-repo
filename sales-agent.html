@@ -34,8 +34,160 @@ const SOCIAL_ORDER='https://onehub-ai-business.floot.app/order?pack=social-media
 function trackedOrder(){return SOCIAL_ORDER+(referral?'&ref='+encodeURIComponent(referral):'')}
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function requestLink(name,price){
- const body='Hello OneHub,\n\nI used the OneHub Sales Agent and would like to request preparation of: '+name+'\nPlanned price shown: US$'+Number(price).toFixed(2)+(referral?'\nReferral code: '+referral:'')+'\n\nPlease confirm the exact scope, availability, licence and product-specific payment instructions before payment.';
- return 'mailto:Stephenchetty1@gmail.com?subject='+encodeURIComponent('OneHub preparation request — '+name)+'&body='+encodeURIComponent(body);
+ const biz=(document.getElementById('business').value||'').trim();
+ const need=(document.getElementById('need').value||'').trim();
+ const body='Hello OneHub,\n\nI used the OneHub Sales Agent and would like follow-up on: '+name+'\nPlanned price shown: US
+function pick(text){
+ const t=text.toLowerCase();
+ if(/affiliate|referr|commission/.test(t)) return {special:'/affiliate-kit',name:'OneHub Affiliate Programme',note:'Apply for the approved 5% referral programme.'};
+ if(/bulk|resell|cohort|licen[cs]e/.test(t)) return {special:'/bulk',name:'Bulk Licensing',note:'Request written commercial licensing terms.'};
+ if(/payment|paypal|yoco|ozow|checkout/.test(t)) return {special:'/payments',name:'Payment Status',note:'Review the currently verified payment routes.'};
+ if(/whatsapp|follow.?up|customer reply|lead response|sales message|quote follow/.test(t)) return {name:'Sales Follow-Up Message Pack',price:17};
+ if(/product description|ecommerce|online store|listing/.test(t)) return {name:'Product Description Pack',price:30.54};
+ if(/planner|productivity|adhd|habit|goal/.test(t)) return {name:'ADHD Daily Planner',price:15};
+ if(/budget|finance|cash flow|expense|invoice/.test(t)) return {name:'Small Business Finance Tracker',price:24};
+ if(/restaurant/.test(t)) return {name:'Restaurant Social Media Kit',price:29};
+ if(/salon|beauty/.test(t)) return {name:'Salon Marketing Kit',price:29};
+ if(/real estate|property|realtor/.test(t)) return {name:'Real Estate Content Kit',price:34};
+ if(/plumb/.test(t)) return {name:'Plumber Marketing Starter Kit',price:24};
+ if(/cleaning/.test(t)) return {name:'Cleaning Business Content Kit',price:24};
+ if(/guesthouse|hotel|accommodation/.test(t)) return {name:'Guesthouse Social Media Kit',price:29};
+ if(/church|ministry/.test(t)) return {name:'Church Social Media Kit',price:19};
+ if(/car dealer|dealership|automotive/.test(t)) return {name:'Car Dealer Content Kit',price:32};
+ if(/personal trainer|fitness|gym/.test(t)) return {name:'Personal Trainer Content Kit',price:27};
+ if(/photograph/.test(t)) return {name:'Photographer Marketing Kit',price:26};
+ return {name:'Social Media Content Pack',price:30.54,ready:true};
+}
+document.getElementById('go').onclick=()=>{
+ const text=(document.getElementById('business').value+' '+document.getElementById('need').value).trim();
+ const out=document.getElementById('result');
+ if(!text){out.innerHTML='<div class="eyebrow">Need one detail</div><h2>Tell me your business or what you need.</h2>';return}
+ const r=pick(text);
+ if(r.special){out.innerHTML='<div class="eyebrow">Best route</div><h2>'+esc(r.name)+'</h2><p>'+esc(r.note)+'</p><div class="actions"><a class="btn primary" href="'+r.special+'">Continue</a></div>';return}
+ if(r.ready){out.innerHTML='<div class="eyebrow">Ready now</div><h2>'+esc(r.name)+'</h2><div class="price">US$30.54 one-time</div><p>300 ready-to-adapt content assets/frameworks for small-business content planning.</p><p class="muted">Delivery follows verified payment and a complete order brief. No sales, reach or income result is guaranteed.</p><div class="actions"><a class="btn primary" href="'+trackedOrder()+'">Prepare my order</a><a class="btn" href="'+followupLink(r.name,r.price,true)+'">Request email follow-up</a><a class="btn" href="/products/social-media-content-pack">See exact contents</a></div>';return}
+ out.innerHTML='<div class="eyebrow">Preparation request</div><h2>'+esc(r.name)+'</h2><div class="price">Planned price · US
+};
+</script>
+</body>
+</html>+Number(price).toFixed(2)+(referral?'\nReferral code: '+referral:'')+(biz?'\nBusiness / industry: '+biz:'')+(need?'\nNeed: '+need:'')+'\n\nPlease confirm the exact scope, availability, licence and product-specific payment instructions before payment.';
+ return 'mailto:Stephenchetty1@gmail.com?subject='+encodeURIComponent('OneHub Sales Agent Lead — '+name)+'&body='+encodeURIComponent(body);
+}
+function followupLink(name,price,ready){
+ const biz=(document.getElementById('business').value||'').trim();
+ const need=(document.getElementById('need').value||'').trim();
+ const body='Hello OneHub,\n\nI used the OneHub Sales Agent and would like a follow-up.\n\nRecommended offer: '+name+'\nStatus: '+(ready?'Ready product':'Preparation request')+'\nPrice shown: US
+function pick(text){
+ const t=text.toLowerCase();
+ if(/affiliate|referr|commission/.test(t)) return {special:'/affiliate-kit',name:'OneHub Affiliate Programme',note:'Apply for the approved 5% referral programme.'};
+ if(/bulk|resell|cohort|licen[cs]e/.test(t)) return {special:'/bulk',name:'Bulk Licensing',note:'Request written commercial licensing terms.'};
+ if(/payment|paypal|yoco|ozow|checkout/.test(t)) return {special:'/payments',name:'Payment Status',note:'Review the currently verified payment routes.'};
+ if(/whatsapp|follow.?up|customer reply|lead response|sales message|quote follow/.test(t)) return {name:'Sales Follow-Up Message Pack',price:17};
+ if(/product description|ecommerce|online store|listing/.test(t)) return {name:'Product Description Pack',price:30.54};
+ if(/planner|productivity|adhd|habit|goal/.test(t)) return {name:'ADHD Daily Planner',price:15};
+ if(/budget|finance|cash flow|expense|invoice/.test(t)) return {name:'Small Business Finance Tracker',price:24};
+ if(/restaurant/.test(t)) return {name:'Restaurant Social Media Kit',price:29};
+ if(/salon|beauty/.test(t)) return {name:'Salon Marketing Kit',price:29};
+ if(/real estate|property|realtor/.test(t)) return {name:'Real Estate Content Kit',price:34};
+ if(/plumb/.test(t)) return {name:'Plumber Marketing Starter Kit',price:24};
+ if(/cleaning/.test(t)) return {name:'Cleaning Business Content Kit',price:24};
+ if(/guesthouse|hotel|accommodation/.test(t)) return {name:'Guesthouse Social Media Kit',price:29};
+ if(/church|ministry/.test(t)) return {name:'Church Social Media Kit',price:19};
+ if(/car dealer|dealership|automotive/.test(t)) return {name:'Car Dealer Content Kit',price:32};
+ if(/personal trainer|fitness|gym/.test(t)) return {name:'Personal Trainer Content Kit',price:27};
+ if(/photograph/.test(t)) return {name:'Photographer Marketing Kit',price:26};
+ return {name:'Social Media Content Pack',price:30.54,ready:true};
+}
+document.getElementById('go').onclick=()=>{
+ const text=(document.getElementById('business').value+' '+document.getElementById('need').value).trim();
+ const out=document.getElementById('result');
+ if(!text){out.innerHTML='<div class="eyebrow">Need one detail</div><h2>Tell me your business or what you need.</h2>';return}
+ const r=pick(text);
+ if(r.special){out.innerHTML='<div class="eyebrow">Best route</div><h2>'+esc(r.name)+'</h2><p>'+esc(r.note)+'</p><div class="actions"><a class="btn primary" href="'+r.special+'">Continue</a></div>';return}
+ if(r.ready){out.innerHTML='<div class="eyebrow">Ready now</div><h2>'+esc(r.name)+'</h2><div class="price">US$30.54 one-time</div><p>300 ready-to-adapt content assets/frameworks for small-business content planning.</p><p class="muted">Delivery follows verified payment and a complete order brief. No sales, reach or income result is guaranteed.</p><div class="actions"><a class="btn primary" href="'+trackedOrder()+'">Prepare my order</a><a class="btn" href="/products/social-media-content-pack">See exact contents</a></div>';return}
+ out.innerHTML='<div class="eyebrow">Preparation request</div><h2>'+esc(r.name)+'</h2><div class="price">Planned price · US$'+Number(r.price).toFixed(2)+'</div><p class="muted">This catalogue item is not represented as completed stock. OneHub confirms exact scope, availability, licence and payment instructions before payment.</p><div class="actions"><a class="btn primary" href="'+requestLink(r.name,r.price)+'">Request preparation</a><a class="btn" href="/products/social-media-content-pack">Choose the ready flagship instead</a></div>';
+};
+</script>
+</body>
+</html>+Number(price).toFixed(2)+(referral?'\nReferral code: '+referral:'')+(biz?'\nBusiness / industry: '+biz:'')+(need?'\nNeed: '+need:'')+'\n\nPlease reply with the next step.';
+ return 'mailto:Stephenchetty1@gmail.com?subject='+encodeURIComponent('OneHub Sales Agent Lead — '+name)+'&body='+encodeURIComponent(body);
+}
+function pick(text){
+ const t=text.toLowerCase();
+ if(/affiliate|referr|commission/.test(t)) return {special:'/affiliate-kit',name:'OneHub Affiliate Programme',note:'Apply for the approved 5% referral programme.'};
+ if(/bulk|resell|cohort|licen[cs]e/.test(t)) return {special:'/bulk',name:'Bulk Licensing',note:'Request written commercial licensing terms.'};
+ if(/payment|paypal|yoco|ozow|checkout/.test(t)) return {special:'/payments',name:'Payment Status',note:'Review the currently verified payment routes.'};
+ if(/whatsapp|follow.?up|customer reply|lead response|sales message|quote follow/.test(t)) return {name:'Sales Follow-Up Message Pack',price:17};
+ if(/product description|ecommerce|online store|listing/.test(t)) return {name:'Product Description Pack',price:30.54};
+ if(/planner|productivity|adhd|habit|goal/.test(t)) return {name:'ADHD Daily Planner',price:15};
+ if(/budget|finance|cash flow|expense|invoice/.test(t)) return {name:'Small Business Finance Tracker',price:24};
+ if(/restaurant/.test(t)) return {name:'Restaurant Social Media Kit',price:29};
+ if(/salon|beauty/.test(t)) return {name:'Salon Marketing Kit',price:29};
+ if(/real estate|property|realtor/.test(t)) return {name:'Real Estate Content Kit',price:34};
+ if(/plumb/.test(t)) return {name:'Plumber Marketing Starter Kit',price:24};
+ if(/cleaning/.test(t)) return {name:'Cleaning Business Content Kit',price:24};
+ if(/guesthouse|hotel|accommodation/.test(t)) return {name:'Guesthouse Social Media Kit',price:29};
+ if(/church|ministry/.test(t)) return {name:'Church Social Media Kit',price:19};
+ if(/car dealer|dealership|automotive/.test(t)) return {name:'Car Dealer Content Kit',price:32};
+ if(/personal trainer|fitness|gym/.test(t)) return {name:'Personal Trainer Content Kit',price:27};
+ if(/photograph/.test(t)) return {name:'Photographer Marketing Kit',price:26};
+ return {name:'Social Media Content Pack',price:30.54,ready:true};
+}
+document.getElementById('go').onclick=()=>{
+ const text=(document.getElementById('business').value+' '+document.getElementById('need').value).trim();
+ const out=document.getElementById('result');
+ if(!text){out.innerHTML='<div class="eyebrow">Need one detail</div><h2>Tell me your business or what you need.</h2>';return}
+ const r=pick(text);
+ if(r.special){out.innerHTML='<div class="eyebrow">Best route</div><h2>'+esc(r.name)+'</h2><p>'+esc(r.note)+'</p><div class="actions"><a class="btn primary" href="'+r.special+'">Continue</a></div>';return}
+ if(r.ready){out.innerHTML='<div class="eyebrow">Ready now</div><h2>'+esc(r.name)+'</h2><div class="price">US$30.54 one-time</div><p>300 ready-to-adapt content assets/frameworks for small-business content planning.</p><p class="muted">Delivery follows verified payment and a complete order brief. No sales, reach or income result is guaranteed.</p><div class="actions"><a class="btn primary" href="'+trackedOrder()+'">Prepare my order</a><a class="btn" href="/products/social-media-content-pack">See exact contents</a></div>';return}
+ out.innerHTML='<div class="eyebrow">Preparation request</div><h2>'+esc(r.name)+'</h2><div class="price">Planned price · US$'+Number(r.price).toFixed(2)+'</div><p class="muted">This catalogue item is not represented as completed stock. OneHub confirms exact scope, availability, licence and payment instructions before payment.</p><div class="actions"><a class="btn primary" href="'+requestLink(r.name,r.price)+'">Request preparation</a><a class="btn" href="/products/social-media-content-pack">Choose the ready flagship instead</a></div>';
+};
+</script>
+</body>
+</html>+Number(r.price).toFixed(2)+'</div><p class="muted">This catalogue item is not represented as completed stock. OneHub confirms exact scope, availability, licence and payment instructions before payment.</p><div class="actions"><a class="btn primary" href="'+requestLink(r.name,r.price)+'">Request preparation + follow-up</a><a class="btn" href="/products/social-media-content-pack">Choose the ready flagship instead</a></div>';
+};
+</script>
+</body>
+</html>+Number(price).toFixed(2)+(referral?'\nReferral code: '+referral:'')+(biz?'\nBusiness / industry: '+biz:'')+(need?'\nNeed: '+need:'')+'\n\nPlease confirm the exact scope, availability, licence and product-specific payment instructions before payment.';
+ return 'mailto:Stephenchetty1@gmail.com?subject='+encodeURIComponent('OneHub Sales Agent Lead — '+name)+'&body='+encodeURIComponent(body);
+}
+function followupLink(name,price,ready){
+ const biz=(document.getElementById('business').value||'').trim();
+ const need=(document.getElementById('need').value||'').trim();
+ const body='Hello OneHub,\n\nI used the OneHub Sales Agent and would like a follow-up.\n\nRecommended offer: '+name+'\nStatus: '+(ready?'Ready product':'Preparation request')+'\nPrice shown: US
+function pick(text){
+ const t=text.toLowerCase();
+ if(/affiliate|referr|commission/.test(t)) return {special:'/affiliate-kit',name:'OneHub Affiliate Programme',note:'Apply for the approved 5% referral programme.'};
+ if(/bulk|resell|cohort|licen[cs]e/.test(t)) return {special:'/bulk',name:'Bulk Licensing',note:'Request written commercial licensing terms.'};
+ if(/payment|paypal|yoco|ozow|checkout/.test(t)) return {special:'/payments',name:'Payment Status',note:'Review the currently verified payment routes.'};
+ if(/whatsapp|follow.?up|customer reply|lead response|sales message|quote follow/.test(t)) return {name:'Sales Follow-Up Message Pack',price:17};
+ if(/product description|ecommerce|online store|listing/.test(t)) return {name:'Product Description Pack',price:30.54};
+ if(/planner|productivity|adhd|habit|goal/.test(t)) return {name:'ADHD Daily Planner',price:15};
+ if(/budget|finance|cash flow|expense|invoice/.test(t)) return {name:'Small Business Finance Tracker',price:24};
+ if(/restaurant/.test(t)) return {name:'Restaurant Social Media Kit',price:29};
+ if(/salon|beauty/.test(t)) return {name:'Salon Marketing Kit',price:29};
+ if(/real estate|property|realtor/.test(t)) return {name:'Real Estate Content Kit',price:34};
+ if(/plumb/.test(t)) return {name:'Plumber Marketing Starter Kit',price:24};
+ if(/cleaning/.test(t)) return {name:'Cleaning Business Content Kit',price:24};
+ if(/guesthouse|hotel|accommodation/.test(t)) return {name:'Guesthouse Social Media Kit',price:29};
+ if(/church|ministry/.test(t)) return {name:'Church Social Media Kit',price:19};
+ if(/car dealer|dealership|automotive/.test(t)) return {name:'Car Dealer Content Kit',price:32};
+ if(/personal trainer|fitness|gym/.test(t)) return {name:'Personal Trainer Content Kit',price:27};
+ if(/photograph/.test(t)) return {name:'Photographer Marketing Kit',price:26};
+ return {name:'Social Media Content Pack',price:30.54,ready:true};
+}
+document.getElementById('go').onclick=()=>{
+ const text=(document.getElementById('business').value+' '+document.getElementById('need').value).trim();
+ const out=document.getElementById('result');
+ if(!text){out.innerHTML='<div class="eyebrow">Need one detail</div><h2>Tell me your business or what you need.</h2>';return}
+ const r=pick(text);
+ if(r.special){out.innerHTML='<div class="eyebrow">Best route</div><h2>'+esc(r.name)+'</h2><p>'+esc(r.note)+'</p><div class="actions"><a class="btn primary" href="'+r.special+'">Continue</a></div>';return}
+ if(r.ready){out.innerHTML='<div class="eyebrow">Ready now</div><h2>'+esc(r.name)+'</h2><div class="price">US$30.54 one-time</div><p>300 ready-to-adapt content assets/frameworks for small-business content planning.</p><p class="muted">Delivery follows verified payment and a complete order brief. No sales, reach or income result is guaranteed.</p><div class="actions"><a class="btn primary" href="'+trackedOrder()+'">Prepare my order</a><a class="btn" href="/products/social-media-content-pack">See exact contents</a></div>';return}
+ out.innerHTML='<div class="eyebrow">Preparation request</div><h2>'+esc(r.name)+'</h2><div class="price">Planned price · US$'+Number(r.price).toFixed(2)+'</div><p class="muted">This catalogue item is not represented as completed stock. OneHub confirms exact scope, availability, licence and payment instructions before payment.</p><div class="actions"><a class="btn primary" href="'+requestLink(r.name,r.price)+'">Request preparation</a><a class="btn" href="/products/social-media-content-pack">Choose the ready flagship instead</a></div>';
+};
+</script>
+</body>
+</html>+Number(price).toFixed(2)+(referral?'\nReferral code: '+referral:'')+(biz?'\nBusiness / industry: '+biz:'')+(need?'\nNeed: '+need:'')+'\n\nPlease reply with the next step.';
+ return 'mailto:Stephenchetty1@gmail.com?subject='+encodeURIComponent('OneHub Sales Agent Lead — '+name)+'&body='+encodeURIComponent(body);
 }
 function pick(text){
  const t=text.toLowerCase();
