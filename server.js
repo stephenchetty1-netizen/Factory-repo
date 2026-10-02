@@ -52,7 +52,7 @@ function requestHref(name,price){
 function productCard(p,ref=''){
  const ready=p.name==='Social Media Content Pack';
  const order=ready?trackedSocialOrder(ref):requestHref(p.name,p.price);
- return '<article class="card"><div class="eyebrow">'+(ready?'Ready now · ':'Planned resource · ')+esc(p.category)+'</div><h3><a href="/products/'+p.slug+'">'+esc(p.name)+'</a></h3><p class="muted">'+(ready?'Completed and ready for fulfilment after verified payment.':'Catalogue concept only. Request preparation before any payment is taken.')+'</p><div class="price">'+(ready?'US$'+p.price.toFixed(2):'Planned price · US$'+p.price.toFixed(2))+'</div><div class="actions"><a class="btn" href="/products/'+p.slug+'">View details</a><a class="btn primary" href="'+esc(order)+'">'+(ready?'Prepare order':'Request preparation')+'</a></div></article>';
+ return '<article class="card"><div class="eyebrow">'+(ready?'Custom service · ':'Planned resource · ')+esc(p.category)+'</div><h3><a href="/products/'+p.slug+'">'+esc(p.name)+'</a></h3><p class="muted">'+(ready?'Custom service starts only after a complete brief and verified matching payment.':'Catalogue concept only. Request preparation before any payment is taken.')+'</p><div class="price">'+(ready?'US$'+p.price.toFixed(2):'Planned price · US$'+p.price.toFixed(2))+'</div><div class="actions"><a class="btn" href="/products/'+p.slug+'">View details</a><a class="btn primary" href="'+esc(order)+'">'+(ready?'Prepare order':'Request preparation')+'</a></div></article>';
 }
 function productPage(p,origin,ref){
  const canonical=origin+'/products/'+p.slug;
