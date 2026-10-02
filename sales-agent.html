@@ -64,6 +64,14 @@ function trackedInternal(path){
   const q=attributionQuery();
   return path+(q?'?'+q:'');
 }
+function trackEvent(event,offer){
+  const q=new URLSearchParams();
+  q.set('event',event);
+  if(offer)q.set('offer',offer);
+  if(referral)q.set('ref',referral);
+  campaignKeys.forEach(k=>{if(campaign[k])q.set(k,campaign[k])});
+  fetch('/track?'+q.toString(),{method:'GET',keepalive:true,cache:'no-store'}).catch(()=>{});
+}
 
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 
@@ -122,19 +130,25 @@ document.getElementById('go').onclick=()=>{
   }
 
   const r=pick(text);
+  trackEvent('recommendation',r.name);
 
   if(r.special){
-    out.innerHTML='<div class="eyebrow">Best route</div><h2>'+esc(r.name)+'</h2><p>'+esc(r.note)+'</p><div class="actions"><a class="btn primary" href="'+trackedInternal(r.special)+'">Continue</a></div>';
+    out.innerHTML='<div class="eyebrow">Best route</div><h2>'+esc(r.name)+'</h2><p>'+esc(r.note)+'</p><div class="actions"><a class="btn primary" data-track="special_route" data-offer="'+esc(r.name)+'" href="'+trackedInternal(r.special)+'">Continue</a></div>';
     return;
   }
 
   if(r.ready){
-    out.innerHTML='<div class="eyebrow">Ready now</div><h2>'+esc(r.name)+'</h2><div class="price">US$30.54 one-time</div><p>Includes five custom branded post designs, five matching captions and one consolidated revision round.</p><p class="muted">Work begins only after a complete brief and verified payment matching this exact scope. This checkout does not purchase a separate 300-framework template bundle.</p><div class="actions"><a class="btn primary" href="'+trackedOrder()+'">Prepare my order</a><a class="btn" href="'+leadLink(r.name,r.price,'Ready product')+'">Request email follow-up</a><a class="btn" href="/products/social-media-content-pack">See exact contents</a></div>';
+    out.innerHTML='<div class="eyebrow">Ready now</div><h2>'+esc(r.name)+'</h2><div class="price">US$30.54 one-time</div><p>Includes five custom branded post designs, five matching captions and one consolidated revision round.</p><p class="muted">Work begins only after a complete brief and verified payment matching this exact scope. This checkout does not purchase a separate 300-framework template bundle.</p><div class="actions"><a class="btn primary" data-track="checkout_click" data-offer="'+esc(r.name)+'" href="'+trackedOrder()+'">Prepare my order</a><a class="btn" data-track="followup_request" data-offer="'+esc(r.name)+'" href="'+leadLink(r.name,r.price,'Ready product')+'">Request email follow-up</a><a class="btn" data-track="product_details" data-offer="'+esc(r.name)+'" href="/products/social-media-content-pack">See exact contents</a></div>';
     return;
   }
 
-  out.innerHTML='<div class="eyebrow">Preparation request</div><h2>'+esc(r.name)+'</h2><div class="price">Planned price · US$'+Number(r.price).toFixed(2)+'</div><p class="muted">This catalogue item is not represented as completed stock. OneHub must confirm exact scope, availability, licence and product-specific payment instructions before payment.</p><div class="actions"><a class="btn primary" href="'+leadLink(r.name,r.price,'Preparation request')+'">Request preparation + follow-up</a><a class="btn" href="/products/social-media-content-pack">Choose the ready flagship instead</a></div>';
+  out.innerHTML='<div class="eyebrow">Preparation request</div><h2>'+esc(r.name)+'</h2><div class="price">Planned price · US$'+Number(r.price).toFixed(2)+'</div><p class="muted">This catalogue item is not represented as completed stock. OneHub must confirm exact scope, availability, licence and product-specific payment instructions before payment.</p><div class="actions"><a class="btn primary" data-track="planned_request" data-offer="'+esc(r.name)+'" href="'+leadLink(r.name,r.price,'Preparation request')+'">Request preparation + follow-up</a><a class="btn" data-track="ready_alternative" data-offer="'+esc(r.name)+'" href="/products/social-media-content-pack">Choose the ready flagship instead</a></div>';
 };
+document.addEventListener('click',e=>{
+  const a=e.target.closest('a[data-track]');
+  if(!a)return;
+  trackEvent(a.dataset.track||'',a.dataset.offer||'');
+});
 </script>
 </body>
 </html>
