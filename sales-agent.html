@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OneHub Sales Agent | Find the Right Offer</title>
+<meta name="description" content="Tell the OneHub Sales Agent what your business needs and get routed to the appropriate ready offer or preparation request.">
+<meta name="robots" content="index,follow">
+<style>
+:root{--bg:#08111f;--panel:#101c2c;--panel2:#14243a;--line:#29405e;--text:#eef3fb;--muted:#a8b6cb;--blue:#4b9cff;--gold:#d7b45b}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#08111f,#0d1726 45%,#08111f);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55}a{color:inherit}.wrap{width:min(980px,92vw);margin:auto}.top{position:sticky;top:0;z-index:30;background:#08111fee;border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.nav{display:flex;justify-content:space-between;align-items:center;padding:15px 0;gap:14px}.brand{text-decoration:none;font-weight:900;letter-spacing:.08em}.brand span{color:var(--blue)}.navlinks{display:flex;gap:12px;flex-wrap:wrap}.navlinks a{text-decoration:none;color:var(--muted);font-size:14px}.hero{padding:58px 0 24px}.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:12px;color:var(--blue);font-weight:800}h1{font-size:clamp(40px,7vw,70px);line-height:1;letter-spacing:-.05em;margin:.2em 0}.lead{font-size:19px;color:var(--muted);max-width:780px}.section{padding:24px 0}.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:20px}.muted{color:var(--muted)}label{display:block;font-weight:800;margin-top:14px}input,textarea{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:13px;border-radius:11px;font:inherit;margin-top:7px}textarea{min-height:110px;resize:vertical}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:800;background:#162940;border:1px solid var(--line);border-radius:11px;padding:11px 14px;cursor:pointer;color:#fff}.btn.primary{background:var(--blue);color:#07111f;border-color:var(--blue)}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.notice{background:#142238;border:1px solid #365679;border-radius:14px;padding:15px;color:#d0d9e8}.price{font-size:26px;font-weight:900;margin:12px 0}footer{border-top:1px solid var(--line);margin-top:46px;padding:30px 0;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav"><a class="brand" href="/">ONEHUB <span>AI</span></a><nav class="navlinks"><a href="/products">Products</a><a href="/tools">Free tools</a><a href="/affiliate-kit">Affiliates</a><a href="/payments">Payments</a></nav></div></header>
+<main class="wrap">
+<section class="hero"><div class="eyebrow">OneHub Sales Agent</div><h1>Tell me what your business needs.</h1><p class="lead">I’ll route you to the most relevant OneHub offer while keeping ready products, planned resources, licensing and payment status clearly separated.</p></section>
+<section class="section"><div class="card">
+<label for="business">Your business or industry</label>
+<input id="business" placeholder="e.g. salon, restaurant, freelancer, online store">
+<label for="need">What do you need help with?</label>
+<textarea id="need" placeholder="e.g. I need social media content, customer follow-up messages, product descriptions, or a bulk licence"></textarea>
+<button class="btn primary" id="go" type="button" style="margin-top:14px">Get my recommendation</button>
+</div></section>
+<section class="section"><div class="card" id="result"><div class="eyebrow">Agent ready</div><h2>Describe your goal above.</h2><p class="muted">Only the Social Media Content Pack is currently represented as completed and ready for fulfilment. Other catalogue items remain preparation requests.</p></div></section>
+<section class="section"><div class="notice">OneHub does not guarantee sales, leads, reach, followers or income. The agent routes customers to products and next steps; it does not create outcome promises or bypass payment verification.</div></section>
+</main>
+<footer><div class="wrap">ONEHUB AI · Independent digital content service · <a href="mailto:Stephenchetty1@gmail.com">Stephenchetty1@gmail.com</a></div></footer>
+<script>
+const params=new URLSearchParams(location.search);
+const rawRef=(params.get('ref')||'').toUpperCase();
+const referral=/^[A-Z0-9_-]{4,32}$/.test(rawRef)?rawRef:'';
+const SOCIAL_ORDER='https://onehub-ai-business.floot.app/order?pack=social-media-content';
+function trackedOrder(){return SOCIAL_ORDER+(referral?'&ref='+encodeURIComponent(referral):'')}
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+function requestLink(name,price){
+ const body='Hello OneHub,\n\nI used the OneHub Sales Agent and would like to request preparation of: '+name+'\nPlanned price shown: US$'+Number(price).toFixed(2)+(referral?'\nReferral code: '+referral:'')+'\n\nPlease confirm the exact scope, availability, licence and product-specific payment instructions before payment.';
+ return 'mailto:Stephenchetty1@gmail.com?subject='+encodeURIComponent('OneHub preparation request — '+name)+'&body='+encodeURIComponent(body);
+}
+function pick(text){
+ const t=text.toLowerCase();
+ if(/affiliate|referr|commission/.test(t)) return {special:'/affiliate-kit',name:'OneHub Affiliate Programme',note:'Apply for the approved 5% referral programme.'};
+ if(/bulk|resell|cohort|licen[cs]e/.test(t)) return {special:'/bulk',name:'Bulk Licensing',note:'Request written commercial licensing terms.'};
+ if(/payment|paypal|yoco|ozow|checkout/.test(t)) return {special:'/payments',name:'Payment Status',note:'Review the currently verified payment routes.'};
+ if(/whatsapp|follow.?up|customer reply|lead response|sales message|quote follow/.test(t)) return {name:'Sales Follow-Up Message Pack',price:17};
+ if(/product description|ecommerce|online store|listing/.test(t)) return {name:'Product Description Pack',price:30.54};
+ if(/planner|productivity|adhd|habit|goal/.test(t)) return {name:'ADHD Daily Planner',price:15};
+ if(/budget|finance|cash flow|expense|invoice/.test(t)) return {name:'Small Business Finance Tracker',price:24};
+ if(/restaurant/.test(t)) return {name:'Restaurant Social Media Kit',price:29};
+ if(/salon|beauty/.test(t)) return {name:'Salon Marketing Kit',price:29};
+ if(/real estate|property|realtor/.test(t)) return {name:'Real Estate Content Kit',price:34};
+ if(/plumb/.test(t)) return {name:'Plumber Marketing Starter Kit',price:24};
+ if(/cleaning/.test(t)) return {name:'Cleaning Business Content Kit',price:24};
+ if(/guesthouse|hotel|accommodation/.test(t)) return {name:'Guesthouse Social Media Kit',price:29};
+ if(/church|ministry/.test(t)) return {name:'Church Social Media Kit',price:19};
+ if(/car dealer|dealership|automotive/.test(t)) return {name:'Car Dealer Content Kit',price:32};
+ if(/personal trainer|fitness|gym/.test(t)) return {name:'Personal Trainer Content Kit',price:27};
+ if(/photograph/.test(t)) return {name:'Photographer Marketing Kit',price:26};
+ return {name:'Social Media Content Pack',price:30.54,ready:true};
+}
+document.getElementById('go').onclick=()=>{
+ const text=(document.getElementById('business').value+' '+document.getElementById('need').value).trim();
+ const out=document.getElementById('result');
+ if(!text){out.innerHTML='<div class="eyebrow">Need one detail</div><h2>Tell me your business or what you need.</h2>';return}
+ const r=pick(text);
+ if(r.special){out.innerHTML='<div class="eyebrow">Best route</div><h2>'+esc(r.name)+'</h2><p>'+esc(r.note)+'</p><div class="actions"><a class="btn primary" href="'+r.special+'">Continue</a></div>';return}
+ if(r.ready){out.innerHTML='<div class="eyebrow">Ready now</div><h2>'+esc(r.name)+'</h2><div class="price">US$30.54 one-time</div><p>300 ready-to-adapt content assets/frameworks for small-business content planning.</p><p class="muted">Delivery follows verified payment and a complete order brief. No sales, reach or income result is guaranteed.</p><div class="actions"><a class="btn primary" href="'+trackedOrder()+'">Prepare my order</a><a class="btn" href="/products/social-media-content-pack">See exact contents</a></div>';return}
+ out.innerHTML='<div class="eyebrow">Preparation request</div><h2>'+esc(r.name)+'</h2><div class="price">Planned price · US$'+Number(r.price).toFixed(2)+'</div><p class="muted">This catalogue item is not represented as completed stock. OneHub confirms exact scope, availability, licence and payment instructions before payment.</p><div class="actions"><a class="btn primary" href="'+requestLink(r.name,r.price)+'">Request preparation</a><a class="btn" href="/products/social-media-content-pack">Choose the ready flagship instead</a></div>';
+};
+</script>
+</body>
+</html>
