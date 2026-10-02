@@ -12,7 +12,7 @@
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap nav"><a class="brand" href="/">ONEHUB <span>AI</span></a><nav class="navlinks"><a href="/products">Products</a><a href="/tools">Free tools</a><a href="/affiliate-kit">Affiliates</a><a href="/payments">Payments</a></nav></div></header>
+<header class="top"><div class="wrap nav"><a class="brand" href="/">ONEHUB <span>AI</span></a><nav class="navlinks"><a href="/products">Products</a><a href="/free-kit">Free kit</a><a href="/tools">Free tools</a><a href="/affiliate-kit">Affiliates</a><a href="/payments">Payments</a></nav></div></header>
 <main class="wrap">
 <section class="hero"><div class="eyebrow">OneHub Sales Agent</div><h1>Tell me what your business needs.</h1><p class="lead">I’ll route you to the most relevant OneHub offer while keeping ready products, planned resources, licensing and payment status clearly separated.</p></section>
 
@@ -37,12 +37,32 @@
 
 <script>
 const params=new URLSearchParams(location.search);
+const campaignKeys=['utm_source','utm_medium','utm_campaign','utm_content'];
+function safeGet(k){try{return localStorage.getItem(k)||''}catch{return''}}
+function safeSet(k,v){try{localStorage.setItem(k,v)}catch{}}
 const rawRef=(params.get('ref')||'').toUpperCase();
-const referral=/^[A-Z0-9_-]{4,32}$/.test(rawRef)?rawRef:'';
+if(/^[A-Z0-9_-]{4,32}$/.test(rawRef))safeSet('onehub_ref',rawRef);
+campaignKeys.forEach(k=>{
+  const v=(params.get(k)||'').slice(0,120);
+  if(/^[a-zA-Z0-9 _.-]{1,120}$/.test(v))safeSet('onehub_'+k,v);
+});
+const referral=safeGet('onehub_ref');
+const campaign=Object.fromEntries(campaignKeys.map(k=>[k,safeGet('onehub_'+k)]));
 const SOCIAL_ORDER='https://onehub-ai-business.floot.app/order?pack=social-media-content';
 
+function attributionQuery(){
+  const q=new URLSearchParams();
+  if(referral)q.set('ref',referral);
+  campaignKeys.forEach(k=>{if(campaign[k])q.set(k,campaign[k])});
+  return q.toString();
+}
 function trackedOrder(){
-  return SOCIAL_ORDER+(referral?'&ref='+encodeURIComponent(referral):'');
+  const q=attributionQuery();
+  return SOCIAL_ORDER+(q?'&'+q:'');
+}
+function trackedInternal(path){
+  const q=attributionQuery();
+  return path+(q?'?'+q:'');
 }
 
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
@@ -61,6 +81,7 @@ function leadLink(name,price,status){
     referral?'Referral code: '+referral:'',
     biz?'Business / industry: '+biz:'',
     need?'Need: '+need:'',
+    campaignKeys.some(k=>campaign[k])?'Campaign attribution: '+campaignKeys.filter(k=>campaign[k]).map(k=>k+'='+campaign[k]).join(', '):'',
     '',
     status==='Ready product'
       ? 'Please reply with the next step for the existing brief-first order flow.'
@@ -103,7 +124,7 @@ document.getElementById('go').onclick=()=>{
   const r=pick(text);
 
   if(r.special){
-    out.innerHTML='<div class="eyebrow">Best route</div><h2>'+esc(r.name)+'</h2><p>'+esc(r.note)+'</p><div class="actions"><a class="btn primary" href="'+r.special+'">Continue</a></div>';
+    out.innerHTML='<div class="eyebrow">Best route</div><h2>'+esc(r.name)+'</h2><p>'+esc(r.note)+'</p><div class="actions"><a class="btn primary" href="'+trackedInternal(r.special)+'">Continue</a></div>';
     return;
   }
 
