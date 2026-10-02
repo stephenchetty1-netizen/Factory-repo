@@ -26,8 +26,14 @@ const socialProduct='https://onehub-ai-business.floot.app/social-media-content';
 function enforceOneHubPolicy(){
  const serverSrc=fs.readFileSync(__filename,'utf8');
  const indexSrc=fs.readFileSync(path.join(__dirname,'index.html'),'utf8');
+ const fulfilmentPath=path.join(__dirname,'FULFILMENT_SOCIAL_MEDIA_CONTENT_PACK.md');
+ const fulfilmentSrc=fs.existsSync(fulfilmentPath)?fs.readFileSync(fulfilmentPath,'utf8'):'';
  const combined=serverSrc+'\n'+indexSrc;
  const failures=[];
+ if(!fulfilmentSrc) failures.push('social_pack_fulfilment_spec_missing');
+ for(const required of ['5 custom branded social post designs','5 matching captions','1 consolidated revision round','Payment for this exact scope is independently verified','A website, enquiry, brief, directory submission, lead, click, or licence-seat count is never evidence of a paid sale.']) if(!fulfilmentSrc.includes(required)) failures.push('fulfilment_spec:'+required);
+ if(!serverSrc.includes('five branded post designs, five matching captions and one consolidated revision round')) failures.push('flagship_scope_copy');
+ if(!serverSrc.includes("allowedEvents=new Set(['recommendation','checkout_click'")) failures.push('checkout_click_tracking');
  if(products.length!==ONEHUB_POLICY.productCount) failures.push('product_count');
  if(new Set(products.map(p=>p.slug)).size!==ONEHUB_POLICY.productCount) failures.push('unique_product_slugs');
  const social=products.find(p=>p.name==='Social Media Content Pack');
