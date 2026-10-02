@@ -58,10 +58,18 @@
 <footer><div class="wrap">ONEHUB AI · Independent digital content service · <a href="mailto:Stephenchetty1@gmail.com">Stephenchetty1@gmail.com</a></div></footer>
 <script>
 (function(){
+ const q=new URLSearchParams(location.search);
+ const src=q.get('utm_source')||'organic_direct';
+ const med=q.get('utm_medium')||'organic_landing';
+ const camp=q.get('utm_campaign')||'traffic_push';
+ const ref=q.get('ref')||'';
+ const view='/track?event=landing_view&offer=Social%20Media%20Content%20Pack&utm_source='+encodeURIComponent(src)+'&utm_medium='+encodeURIComponent(med)+'&utm_campaign='+encodeURIComponent(camp)+'&utm_content=sa_5_posts_landing&ref='+encodeURIComponent(ref);
+ try{navigator.sendBeacon(view)}catch(e){fetch(view,{keepalive:true,cache:'no-store'}).catch(()=>{})}
  const a=document.getElementById('orderCta');
  if(!a)return;
  a.addEventListener('click',function(){
-  try{navigator.sendBeacon('/track?event=checkout_click&offer=Social%20Media%20Content%20Pack&utm_source=sa_5_posts&utm_medium=organic_landing&utm_campaign=traffic_push&utm_content=landing_order_cta')}catch(e){}
+  const click='/track?event=checkout_click&offer=Social%20Media%20Content%20Pack&utm_source='+encodeURIComponent(src)+'&utm_medium='+encodeURIComponent(med)+'&utm_campaign='+encodeURIComponent(camp)+'&utm_content=landing_order_cta&ref='+encodeURIComponent(ref);
+  try{navigator.sendBeacon(click)}catch(e){}
  });
 })();
 </script>
