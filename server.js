@@ -216,7 +216,8 @@ http.createServer((req,res)=>{
  if(p==='/policy-status') return send(200,'application/json; charset=utf-8',JSON.stringify(ENFORCED_POLICY_STATUS));
  if(p==='/'+indexNowKey+'.txt') return send(200,'text/plain; charset=utf-8',indexNowKey);
  if(p==='/robots.txt') return send(200,'text/plain','User-agent: *\nAllow: /\nSitemap: '+origin+'/sitemap.xml\n');
- if(p==='/sitemap.xml'){const urls=[origin+'/',origin+'/products',origin+'/products/social-media-content-pack',origin+'/tools',origin+'/learn',origin+'/referrals',origin+'/free-kit',origin+'/demos',origin+'/tonight',origin+'/bulk',origin+'/affiliate-kit',origin+'/partners',origin+'/payments',origin+'/sales-agent',...guides.map(x=>origin+'/learn/'+x.slug),...toolsList.map(x=>origin+'/tools/'+x.slug)];return send(200,'application/xml','<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(x=>'<url><loc>'+x.replace(/&/g,'&amp;')+'</loc></url>').join('')+'</urlset>');}
+ if(p==='/sitemap.xml'){const urls=[origin+'/',origin+'/products',origin+'/products/social-media-content-pack',origin+'/tools',origin+'/learn',origin+'/referrals',origin+'/free-kit',origin+'/demos',origin+'/tonight',origin+'/bulk',origin+'/affiliate-kit',origin+'/partners',origin+'/payments',origin+'/sales-agent',origin+'/5-social-media-posts-south-africa',...guides.map(x=>origin+'/learn/'+x.slug),...toolsList.map(x=>origin+'/tools/'+x.slug)];return send(200,'application/xml','<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(x=>'<url><loc>'+x.replace(/&/g,'&amp;')+'</loc></url>').join('')+'</urlset>');}
+ if(p==='/5-social-media-posts-south-africa') return send(200,'text/html; charset=utf-8',fs.readFileSync(path.join(__dirname,'5-social-media-posts-south-africa.html'),'utf8'));
  if(p==='/sales-agent') return send(200,'text/html; charset=utf-8',fs.readFileSync(path.join(__dirname,'sales-agent.html'),'utf8'));
  if(p==='/partners') return send(200,'text/html; charset=utf-8',partnersPage(origin));
  if(p==='/payments') return send(200,'text/html; charset=utf-8',paymentsPage(origin));
@@ -249,6 +250,7 @@ http.createServer((req,res)=>{
   'https://factory-repo-production.up.railway.app/',
   'https://factory-repo-production.up.railway.app/free-kit',
   'https://factory-repo-production.up.railway.app/sales-agent',
-  'https://factory-repo-production.up.railway.app/products/social-media-content-pack'
+  'https://factory-repo-production.up.railway.app/products/social-media-content-pack',
+  'https://factory-repo-production.up.railway.app/5-social-media-posts-south-africa'
  ]),1500);
 });
